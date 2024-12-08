@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
 
@@ -28,7 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 */
 
-
 /* Include guard */
 #ifndef BLINKER_HPP
 #define BLINKER_HPP
@@ -39,28 +38,27 @@
 #include <utils/task.hpp>
 #include <chrono>
 
-
 namespace periodics
 {
-   /**
-    * @brief It is used for toggling a LED.
-    * 
-    */
+    /**
+     * @brief It is used for toggling a LED.
+     *
+     */
     class CBlinker : public utils::CTask
     {
-        public:
-            /* Construnctor */
-            CBlinker(
-                std::chrono::milliseconds            f_period, 
-                mbed::DigitalOut    f_led
-            );
-            /* Destructor */
-            ~CBlinker();
-        private:
-            /* Run method */
-            virtual void        _run();
-            /* Digital output line connected to a LED */
-            mbed::DigitalOut    m_led;    
+    public:
+        /* Construnctor */
+        CBlinker(
+            std::chrono::milliseconds f_period,
+            mbed::DigitalOut f_led);
+        /* Destructor */
+        ~CBlinker();
+
+    private:
+        /* Run method */
+        virtual void _run();
+        /* Digital output line connected to a LED */
+        mbed::DigitalOut m_led;
     }; // class CBlinker
 }; // namespace periodics
 

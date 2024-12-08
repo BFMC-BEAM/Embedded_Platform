@@ -21,8 +21,8 @@ namespace periodics
             CUltrasonido(
                 std::chrono::milliseconds f_period,
                 UnbufferedSerial& f_serial,
-                PinName Echo,
-                PinName Trigger
+                mbed::DigitalOut Trigger,
+                mbed::DigitalIn Echo
             );
             /* Destructor */
             ~CUltrasonido();
@@ -32,14 +32,17 @@ namespace periodics
             /* private variables & method member */
 
             UnbufferedSerial& m_serial;
-            PinName m_echo;
-            PinName m_trigger;        
+            mbed::DigitalOut m_trigger;
+            mbed::DigitalIn m_echo;     
 
             /* Run method */
             virtual void        _run();
 
             /** @brief Active flag  */
             bool m_isActive;
+
+
+            mbed::Timer m_timer;   
 
     }; // class CUltrasonido
 }; // namespace periodics
