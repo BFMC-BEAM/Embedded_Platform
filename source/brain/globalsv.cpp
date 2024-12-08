@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
 
@@ -41,15 +41,16 @@ uint16_t int_globalsV_instantConsumption_Avg_Total_mAmpsH = 0;
 uint16_t uint16_globalsV_battery_mAmps_user = 0;
 uint16_t readings[11] = {0}; // Buffer for the last 10 readings
 
-uint8_t  uint8_globalsV_value_of_kl       = 0;
+uint8_t uint8_globalsV_value_of_kl = 0;
 // Variables for filtering
 uint8_t alpha_scaled = 25; // EMA coefficient scaled from 0.025
-uint8_t windowSize = 10; // Window size for the averaging filter
-uint8_t indexul = 0; // buffer index
+uint8_t windowSize = 10;   // Window size for the averaging filter
+uint8_t indexul = 0;       // buffer index
 
-bool bool_globalsV_imu_isActive     = false;
+bool bool_globalsV_ultra_isActive = false;
+bool bool_globalsV_imu_isActive = false;
 bool bool_globalsV_instant_isActive = false;
 bool bool_globalsV_battery_isActive = false;
-bool bool_globalsV_resource_isActive= false;
+bool bool_globalsV_resource_isActive = false;
 bool bool_globalsV_ShuttedDown = false;
 bool bool_globalsV_warningFlag = false;

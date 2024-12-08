@@ -40,7 +40,7 @@ const std::chrono::milliseconds g_baseTick = std::chrono::milliseconds(1); // mi
 UnbufferedSerial g_rpi(USBTX, USBRX, 115200);
 
 // It's a task for blinking periodically the built-in led on the Nucleo board, signaling the code is uploaded on the nucleo.
-periodics::CBlinker g_blinker(g_baseTick * 500, LED1);
+periodics::CBlinker g_blinker(g_baseTick * 1000, LED1);
 
 periodics::CAlerts g_alerts(g_baseTick * 5000);
 
@@ -71,6 +71,7 @@ periodics::CPowermanager g_powermanager(g_baseTick * 100, g_klmanager, g_rpi, g_
 brain::CBatterymanager g_batteryManager(dummy_value);
 
 /* USER NEW COMPONENT BEGIN */
+periodics::CUltrasonido g_ultrasonido(g_baseTick*150, g_rpi, D5, D6);
 
 /* USER NEW COMPONENT END */
 
@@ -83,6 +84,7 @@ drivers::CSerialMonitor::CSerialSubscriberMap g_serialMonitorSubscribers = {
     {"battery",        mbed::callback(&g_totalvoltage,      &periodics::CTotalVoltage::serialCallbackTOTALVcommand)},
     {"instant",        mbed::callback(&g_instantconsumption,&periodics::CInstantConsumption::serialCallbackINSTANTcommand)},
     {"imu",            mbed::callback(&g_imu,               &periodics::CImu::serialCallbackIMUcommand)},
+    {"ultra",          mbed::callback(&g_ultrasonido,               &periodics::CUltrasonido::serialCallbackULTRAcommand)},
     {"kl",             mbed::callback(&g_klmanager,         &brain::CKlmanager::serialCallbackKLCommand)},
     {"batteryCapacity",mbed::callback(&g_batteryManager,    &brain::CBatterymanager::serialCallbackBATTERYCommand)},
     {"resourceMonitor",mbed::callback(&g_resourceMonitor,   &periodics::CResourcemonitor::serialCallbackRESMONCommand),}
@@ -103,6 +105,7 @@ utils::CTask* g_taskList[] = {
     &g_resourceMonitor,
     &g_alerts,
     // USER NEW PERIODICS BEGIN -
+    &g_ultrasonido,
     
     // USER NEW PERIODICS END
 }; 
@@ -126,6 +129,8 @@ uint8_t setup()
     g_rpi.write("#################\r\n", 19);
     g_rpi.write("#               #\r\n", 19);
     g_rpi.write("#   I'm alive   #\r\n", 19);
+    g_rpi.write("#               #\r\n", 19);
+    g_rpi.write("# Unfortunately #\r\n", 19);
     g_rpi.write("#               #\r\n", 19);
     g_rpi.write("#################\r\n", 19);
     g_rpi.write("\r\n", 2);

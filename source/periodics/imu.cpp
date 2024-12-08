@@ -81,7 +81,9 @@ namespace periodics{
 
         /*--------------------------------------------------------------------------------------------------*
         *  i2c_instance variable member will be initialized with the actual I2C of the target board.
-        *---------------------------------------------------------------------------------------------------*/      
+        *---------------------------------------------------------------------------------------------------*/    
+        
+        printf("Starting IMU sensor data acquisition...\r\n");  
         i2c_instance = new I2C(SDA, SCL);
         i2c_instance->frequency(400000);
 
@@ -699,7 +701,7 @@ namespace periodics{
     void CImu::_run()
     {
         if(!m_isActive) return;
-        
+
         char buffer[_100_chars];
         s8 comres = BNO055_SUCCESS;
 

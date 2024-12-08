@@ -1,18 +1,23 @@
 import os
 
 def create_component(category, component_name, project_root="."):
-    
+    # Define las categorías existentes
     existing_categories = ["brain", "drivers", "periodics", "utils"]
 
-    path_EmbeddedPlatform = str(os.getcwd())
-    last_backslash = str(os.getcwd())[::-1].index('\\')
-    filename_Emb = path_EmbeddedPlatform[:len(path_EmbeddedPlatform)-last_backslash]
-    filename_CMake = path_EmbeddedPlatform[:len(path_EmbeddedPlatform)-last_backslash] + "CMakeLists.txt"
+    # Obtiene la ruta absoluta del directorio donde está el script
+    path_EmbeddedPlatform = os.path.abspath(os.path.dirname(__file__))
 
+    # Modificación para Linux
+    last_separator = path_EmbeddedPlatform[::-1].index('/')
+    filename_Emb = path_EmbeddedPlatform[:len(path_EmbeddedPlatform)-last_separator]
+    filename_CMake = path_EmbeddedPlatform[:len(path_EmbeddedPlatform)-last_separator] + "/CMakeLists.txt"
+
+    # Verifica si la categoría está en las existentes
     if category not in existing_categories:
         last_include = -1
         last_source = -1
 
+        # Lee el archivo CMakeLists.txt
         with open(filename_CMake, 'r') as file:
             lines = file.readlines()
 
@@ -22,19 +27,22 @@ def create_component(category, component_name, project_root="."):
             if '    "${CMAKE_CURRENT_SOURCE_DIR}/source/' in x:
                 last_source = int(lines.index(x))
 
+        # Inserta las nuevas rutas en CMakeLists.txt
         lines.insert(last_source + 1, '    "${CMAKE_CURRENT_SOURCE_DIR}/source/' + category + '/*.cpp"' + '\n')
         lines.insert(last_include + 2, '    ${CMAKE_CURRENT_SOURCE_DIR}/include/' + category + '\n')
 
         with open(filename_CMake, 'w') as file:
             file.writelines(lines)
 
+    # Crear las rutas de include y source
     include_path = os.path.join(filename_Emb, "include", category)
     source_path = os.path.join(filename_Emb, "source", category)
 
+    # Crea los directorios si no existen
     os.makedirs(include_path, exist_ok=True)
     os.makedirs(source_path, exist_ok=True)
 
-    #Create header file
+    # Crear archivo de cabecera
     header_file_path = os.path.join(include_path, f"{component_name}.hpp")
     if not os.path.exists(header_file_path):
         with open(header_file_path, "w") as f:
@@ -90,7 +98,7 @@ def create_component(category, component_name, project_root="."):
     else:
         print(f"File already exists: {header_file_path}")
 
-    #Create source file
+    # Crear archivo de código fuente
     source_file_path = os.path.join(source_path, f"{component_name}.cpp")
     if not os.path.exists(source_file_path):
         with open(source_file_path, "w") as f:
