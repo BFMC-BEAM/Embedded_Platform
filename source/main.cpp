@@ -128,9 +128,8 @@ uint8_t setup()
     g_rpi.write("\r\n\r\n", 4);
     g_rpi.write("#################\r\n", 19);
     g_rpi.write("#               #\r\n", 19);
-    g_rpi.write("#   I'm alive   #\r\n", 19);
-    g_rpi.write("#               #\r\n", 19);
-    g_rpi.write("# Unfortunately #\r\n", 19);
+    g_rpi.write("#    What is    #\r\n", 19);
+    g_rpi.write("#  my purpose?  #\r\n", 19);
     g_rpi.write("#               #\r\n", 19);
     g_rpi.write("#################\r\n", 19);
     g_rpi.write("\r\n", 2);
