@@ -71,7 +71,9 @@ periodics::CPowermanager g_powermanager(g_baseTick * 100, g_klmanager, g_rpi, g_
 brain::CBatterymanager g_batteryManager(dummy_value);
 
 /* USER NEW COMPONENT BEGIN */
-periodics::CUltrasonido g_ultrasonido(g_baseTick*150, g_rpi, D8, D9);
+mbed::InterruptIn echoPin(D9);
+periodics::CUltrasonido g_ultrasonido(g_baseTick*100, g_rpi, D8, echoPin);
+
 
 /* USER NEW COMPONENT END */
 

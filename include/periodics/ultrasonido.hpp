@@ -22,7 +22,7 @@ namespace periodics
                 std::chrono::milliseconds f_period,
                 UnbufferedSerial& f_serial,
                 mbed::DigitalOut Trigger,
-                mbed::DigitalIn Echo
+                mbed::InterruptIn& Echo
             );
             /* Destructor */
             ~CUltrasonido();
@@ -33,16 +33,27 @@ namespace periodics
 
             UnbufferedSerial& m_serial;
             mbed::DigitalOut m_trigger;
-            mbed::DigitalIn m_echo;     
+            mbed::InterruptIn& m_echo;     
+            int l_distance;
+
+            //                                                                                      //
+            // Se descarto promedio de muestras por la baja velocidad de respuesta del sensor       //
+            //                                                                                      //
+            // int n_muestras;
+            // int prom_muestras;
+            
+            void triggerPulse();
+            void startTimer();
+            void stopTimer();
 
             /* Run method */
             virtual void        _run();
 
             /** @brief Active flag  */
             bool m_isActive;
-
-
-            mbed::Timer m_timer;   
+            
+            mbed::Timer m_timer_trigger;
+            mbed::Timer m_timer_echo;   
 
     }; // class CUltrasonido
 }; // namespace periodics

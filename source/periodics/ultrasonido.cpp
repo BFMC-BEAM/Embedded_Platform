@@ -12,7 +12,7 @@ namespace periodics
             std::chrono::milliseconds f_period,
             UnbufferedSerial &f_serial,
             mbed::DigitalOut Trigger,
-            mbed::DigitalIn Echo
+            mbed::InterruptIn &Echo
         )
         : utils::CTask(f_period)
         , m_serial(f_serial)
@@ -22,6 +22,15 @@ namespace periodics
         /* constructor behaviour */
         m_trigger = 0;
         m_echo.mode(PullDown);
+        m_timer_trigger.start();
+        l_distance=0;
+
+        //                                                                                      //
+        // Se descarto promedio de muestras por la baja velocidad de respuesta del sensor       //
+        //                                                                                      //
+        
+        // n_muestras=0;
+        // prom_muestras=0;
     }
 
     /** @brief  CUltrasonido class destructor
@@ -57,13 +66,52 @@ namespace periodics
         if(!m_isActive) return;
 
         m_trigger = 1;
-        ThisThread::sleep_for(chrono::microseconds(5).count() / 1000); // Convert microseconds to milliseconds
-        m_trigger = 0;
-        ThisThread::sleep_for(chrono::microseconds(10).count() / 1000); // Convert microseconds to milliseconds
-        m_trigger = 1;
+        if(m_timer_trigger.elapsed_time().count() >= 10){
+            m_timer_trigger.reset();
+            m_trigger = 0;
+        }
+        else
+        {
+            m_trigger = 1;
+        }
 
 
+        m_echo.rise(mbed::callback(this, &CUltrasonido::startTimer));
+        m_echo.fall(mbed::callback(this, &CUltrasonido::stopTimer));
+
+        //                                                                                      //
+        // Se descarto promedio de muestras por la baja velocidad de respuesta del sensor       //
+        //                                                                                      //
+
+        // if (n_muestras<5)
+        // {
+        //     n_muestras++;
+        //     prom_muestras += l_distance;
+        // }
+        // else
+        // {
+        //     printf("@ultra: %d\n\r;;", prom_muestras/5);
+        //     n_muestras = 0;
+        //     prom_muestras = 0;
+        // }
+
+        printf("@ultra: %d\n\r;;", l_distance);
 
     }
+
+    void CUltrasonido::triggerPulse() {
+        m_timer_echo.reset();
+        m_timer_echo.start();
+    }
+
+    void CUltrasonido::startTimer() {
+        m_timer_echo.reset();
+        m_timer_echo.start();
+    }
+
+    void CUltrasonido::stopTimer() {
+        m_timer_echo.stop();
+        l_distance = m_timer_echo.elapsed_time().count() / 58.0; // Convert time to distance
+    }   
 
 }; // namespace periodics

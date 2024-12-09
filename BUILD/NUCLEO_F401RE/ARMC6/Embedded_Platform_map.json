@@ -13,7 +13,7 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 1322,
+            ".text": 2270,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -68,7 +68,7 @@
     {
         "module": "mbed-os/connectivity",
         "size": {
-            ".text": 859,
+            ".text": 817,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -79,7 +79,7 @@
     {
         "module": "mbed-os/drivers",
         "size": {
-            ".text": 3700,
+            ".text": 4298,
             ".data": 0,
             ".bss": 40,
             ".text-delta": 0,
@@ -101,7 +101,7 @@
     {
         "module": "mbed-os/hal",
         "size": {
-            ".text": 2342,
+            ".text": 2340,
             ".data": 4,
             ".bss": 58,
             ".text-delta": 0,
@@ -112,7 +112,7 @@
     {
         "module": "mbed-os/platform",
         "size": {
-            ".text": 8334,
+            ".text": 8384,
             ".data": 64,
             ".bss": 412,
             ".text-delta": 0,
@@ -123,7 +123,7 @@
     {
         "module": "mbed-os/rtos",
         "size": {
-            ".text": 446,
+            ".text": 438,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -134,9 +134,9 @@
     {
         "module": "mbed-os/targets",
         "size": {
-            ".text": 19887,
+            ".text": 21563,
             ".data": 8,
-            ".bss": 490,
+            ".bss": 1028,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -167,9 +167,9 @@
     {
         "module": "source/main.o",
         "size": {
-            ".text": 3963,
+            ".text": 3977,
             ".data": 40,
-            ".bss": 2409,
+            ".bss": 2489,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -178,7 +178,7 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 5530,
+            ".text": 5914,
             ".data": 0,
             ".bss": 4,
             ".text-delta": 0,
@@ -199,9 +199,9 @@
     },
     {
         "summary": {
-            "static_ram": 11886,
+            "static_ram": 12504,
             "static_ram_delta": 0,
-            "total_flash": 71465,
+            "total_flash": 75083,
             "total_flash_delta": 0
         }
     }
