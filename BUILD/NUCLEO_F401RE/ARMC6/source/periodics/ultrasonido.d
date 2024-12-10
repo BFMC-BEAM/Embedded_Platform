@@ -291,4 +291,5 @@ BUILD/NUCLEO_F401RE/ARMC6/source/periodics/ultrasonido.o: \
   mbed-os/platform/include/platform/mbed_stats.h \
   mbed-os/platform/include/platform/Stream.h \
   mbed-os/platform/include/platform/FileLike.h include/utils/task.hpp \
-  include/brain/globalsv.hpp
+  include/brain/globalsv.hpp include/periodics/alerts.hpp \
+  include/drivers/speedingmotor.hpp

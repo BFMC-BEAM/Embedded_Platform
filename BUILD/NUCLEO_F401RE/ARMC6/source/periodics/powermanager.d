@@ -293,7 +293,9 @@ BUILD/NUCLEO_F401RE/ARMC6/source/periodics/powermanager.o: \
   mbed-os/platform/include/platform/FileLike.h include/utils/task.hpp \
   include/brain/globalsv.hpp include/brain/klmanager.hpp \
   include/periodics/alerts.hpp include/periodics/imu.hpp \
-  include/drivers/bno055.hpp include/periodics/instantconsumption.hpp \
+  include/drivers/bno055.hpp include/periodics/ultrasonido.hpp \
+  include/drivers/speedingmotor.hpp \
+  include/periodics/instantconsumption.hpp \
   include/periodics/totalvoltage.hpp include/brain/robotstatemachine.hpp \
-  include/drivers/speedingmotor.hpp include/drivers/steeringmotor.hpp \
-  include/utils/taskmanager.hpp include/periodics/resourcemonitor.hpp
+  include/drivers/steeringmotor.hpp include/utils/taskmanager.hpp \
+  include/periodics/resourcemonitor.hpp

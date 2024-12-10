@@ -44,7 +44,7 @@ namespace brain{
      * @param f_speedingControl     reference to brushless motor control interface
      */
     CRobotStateMachine::CRobotStateMachine(
-            std::chrono::milliseconds                      f_period,
+            std::chrono::milliseconds     f_period,
             UnbufferedSerial&             f_serialPort,
             drivers::ISteeringCommand&    f_steeringControl,
             drivers::ISpeedingCommand&    f_speedingControl

@@ -13,7 +13,7 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 2270,
+            ".text": 2154,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -123,7 +123,7 @@
     {
         "module": "mbed-os/rtos",
         "size": {
-            ".text": 438,
+            ".text": 446,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -145,7 +145,7 @@
     {
         "module": "source/brain",
         "size": {
-            ".text": 1784,
+            ".text": 1834,
             ".data": 2,
             ".bss": 57,
             ".text-delta": 0,
@@ -167,9 +167,9 @@
     {
         "module": "source/main.o",
         "size": {
-            ".text": 3977,
+            ".text": 4099,
             ".data": 40,
-            ".bss": 2489,
+            ".bss": 2833,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -178,7 +178,7 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 5914,
+            ".text": 6542,
             ".data": 0,
             ".bss": 4,
             ".text-delta": 0,
@@ -199,9 +199,9 @@
     },
     {
         "summary": {
-            "static_ram": 12504,
+            "static_ram": 12848,
             "static_ram_delta": 0,
-            "total_flash": 75083,
+            "total_flash": 75775,
             "total_flash_delta": 0
         }
     }

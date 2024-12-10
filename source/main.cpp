@@ -64,18 +64,24 @@ brain::CRobotStateMachine g_robotstatemachine(g_baseTick * 50, g_rpi, g_steering
 
 periodics::CResourcemonitor g_resourceMonitor(g_baseTick * 5000, g_rpi);
 
-brain::CKlmanager g_klmanager(g_alerts, g_imu, g_instantconsumption, g_totalvoltage, g_robotstatemachine, g_resourceMonitor);
+/* USER NEW COMPONENT BEGIN */
+mbed::DigitalOut trigPin(D8);
+mbed::InterruptIn echoPinFront(D9);
+mbed::InterruptIn echoPinBack(D7);
+mbed::InterruptIn echoPinLeft(D6);
+mbed::InterruptIn echoPinRight(D5);
+periodics::CUltrasonido g_ultrasonido(g_baseTick*30, g_rpi, g_speedingDriver, trigPin, echoPinFront, echoPinBack, echoPinLeft, echoPinRight);
+
+
+/* USER NEW COMPONENT END */
+
+
+brain::CKlmanager g_klmanager(g_alerts, g_imu, g_ultrasonido, g_instantconsumption, g_totalvoltage, g_robotstatemachine, g_resourceMonitor);
 
 periodics::CPowermanager g_powermanager(g_baseTick * 100, g_klmanager, g_rpi, g_totalvoltage, g_instantconsumption, g_alerts);
 
 brain::CBatterymanager g_batteryManager(dummy_value);
 
-/* USER NEW COMPONENT BEGIN */
-mbed::InterruptIn echoPin(D9);
-periodics::CUltrasonido g_ultrasonido(g_baseTick*100, g_rpi, D8, echoPin);
-
-
-/* USER NEW COMPONENT END */
 
 // Map for redirecting messages with the key and the callback functions. If the message key equals to one of the enumerated keys, than it will be applied the paired callback function.
 drivers::CSerialMonitor::CSerialSubscriberMap g_serialMonitorSubscribers = {
