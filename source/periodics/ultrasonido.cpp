@@ -41,6 +41,7 @@ namespace periodics
     {
         /* constructor behaviour */
         m_trigger = 0;
+        m_objectDetected = false;
         m_echoFront.mode(PullDown);
         m_echoBack.mode(PullDown);
         m_echoLeft.mode(PullDown);
@@ -107,10 +108,17 @@ namespace periodics
         }
         else
         {
-            if( l_distanceFront <= 30 && l_distanceBack <= 30)
+            if( l_distanceFront <= 30 && l_distanceBack <= 30 )
             {
-                m_speedControl.setSpeed(0);
-                printf("@speed:0;;\n\r");
+                if (m_objectDetected == false)
+                {
+                    m_speedControl.setBrake();
+                    m_objectDetected = true;
+                }
+                else
+                {
+                    printf("@ultra:500;500;500;500;;\n\r");     //objetos detectados
+                }
             }
 
             printf("@ultra:%d;%d;%d;%d;;\n\r"

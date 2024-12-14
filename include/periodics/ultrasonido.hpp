@@ -46,7 +46,10 @@ namespace periodics
             mbed::Timer m_timerBack;
             mbed::Timer m_timerLeft;
             mbed::Timer m_timerRight;
+            
             bool m_isActive;
+            bool m_objectDetected;
+
             int n_muestras;
             int prom_muestrasFront;
             int prom_muestrasBack;
