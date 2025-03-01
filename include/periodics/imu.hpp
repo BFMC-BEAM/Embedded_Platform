@@ -111,6 +111,18 @@ namespace periodics
             s32 m_positionX;
             s32 m_positionY;
             s32 m_positionZ;
+
+            /* Variables para el filtro de media móvil */
+            static const int FILTER_SIZE = 10;
+            s32 accelXBuffer[FILTER_SIZE];
+            s32 accelYBuffer[FILTER_SIZE];
+            s32 accelZBuffer[FILTER_SIZE];
+            int accelXIndex;
+            int accelYIndex;
+            int accelZIndex;
+            s32 accelXSum;
+            s32 accelYSum;
+            s32 accelZSum;
     }; // class CImu
 
 }; // namespace utils

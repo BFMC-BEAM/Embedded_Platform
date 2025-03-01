@@ -383,99 +383,118 @@ namespace periodics{
     */
 
     void CImu::_run()
-{
-    if(!m_isActive) return;
-
-    char buffer[_100_chars];
-    s8 comres = BNO055_SUCCESS;
-
-    s16 s16_euler_h_raw = BNO055_INIT_VALUE;
-    s16 s16_euler_p_raw = BNO055_INIT_VALUE;
-    s16 s16_euler_r_raw = BNO055_INIT_VALUE;
-
-    s16 s16_linear_accel_x_raw = BNO055_INIT_VALUE;
-    s16 s16_linear_accel_y_raw = BNO055_INIT_VALUE;
-    s16 s16_linear_accel_z_raw = BNO055_INIT_VALUE;
-
-    s16 s16_gravity_x_raw = BNO055_INIT_VALUE;
-    s16 s16_gravity_y_raw = BNO055_INIT_VALUE;
-    s16 s16_gravity_z_raw = BNO055_INIT_VALUE;
-
-    comres += bno055_read_euler_h(&s16_euler_h_raw);
-    if(comres != BNO055_SUCCESS) return;
-
-    comres += bno055_read_euler_p(&s16_euler_p_raw);
-    if(comres != BNO055_SUCCESS) return;
-
-    comres += bno055_read_euler_r(&s16_euler_r_raw);
-    if(comres != BNO055_SUCCESS) return;
-
-    s32 s16_euler_h_deg = (s16_euler_h_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int;
-    s32 s16_euler_p_deg = (s16_euler_p_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int;
-    s32 s16_euler_r_deg = (s16_euler_r_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int;
-
-    s16 s16_euler_h_rad = (s16_euler_h_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int * (M_PI/180);
-    s16 s16_euler_p_rad = (s16_euler_p_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int * (M_PI/180);
-    s16 s16_euler_r_rad = (s16_euler_r_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int * (M_PI/180);
-
-    comres = bno055_read_linear_accel_x(&s16_linear_accel_x_raw);
-    if(comres != BNO055_SUCCESS) return;
-    
-    comres = bno055_read_linear_accel_y(&s16_linear_accel_y_raw);
-    if(comres != BNO055_SUCCESS) return;
-
-    comres = bno055_read_linear_accel_z(&s16_linear_accel_z_raw);
-    if(comres != BNO055_SUCCESS) return;
-
-    s32 s16_linear_accel_x_msq = (s16_linear_accel_x_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-    s32 s16_linear_accel_y_msq = (s16_linear_accel_y_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-    s32 s16_linear_accel_z_msq = (s16_linear_accel_z_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-
-    if((-110 <= s16_linear_accel_x_msq && s16_linear_accel_x_msq <= 110) && (-110 <= s16_linear_accel_y_msq && s16_linear_accel_y_msq <= 110))
     {
-        m_velocityX = 0;
-        m_velocityY = 0;
-        m_velocityZ = 0;
-        m_velocityStationaryCounter++;
+        if(!m_isActive) return;
+
+        char buffer[_100_chars];
+        s8 comres = BNO055_SUCCESS;
+
+        s16 s16_euler_h_raw = BNO055_INIT_VALUE;
+        s16 s16_euler_p_raw = BNO055_INIT_VALUE;
+        s16 s16_euler_r_raw = BNO055_INIT_VALUE;
+
+        s16 s16_linear_accel_x_raw = BNO055_INIT_VALUE;
+        s16 s16_linear_accel_y_raw = BNO055_INIT_VALUE;
+        s16 s16_linear_accel_z_raw = BNO055_INIT_VALUE;
+
+        s16 s16_gravity_x_raw = BNO055_INIT_VALUE;
+        s16 s16_gravity_y_raw = BNO055_INIT_VALUE;
+        s16 s16_gravity_z_raw = BNO055_INIT_VALUE;
+
+        comres += bno055_read_euler_h(&s16_euler_h_raw);
+        if(comres != BNO055_SUCCESS) return;
+
+        comres += bno055_read_euler_p(&s16_euler_p_raw);
+        if(comres != BNO055_SUCCESS) return;
+
+        comres += bno055_read_euler_r(&s16_euler_r_raw);
+        if(comres != BNO055_SUCCESS) return;
+
+        s32 s16_euler_h_deg = (s16_euler_h_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int;
+        s32 s16_euler_p_deg = (s16_euler_p_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int;
+        s32 s16_euler_r_deg = (s16_euler_r_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int;
+
+        s16 s16_euler_h_rad = (s16_euler_h_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int * (M_PI/180);
+        s16 s16_euler_p_rad = (s16_euler_p_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int * (M_PI/180);
+        s16 s16_euler_r_rad = (s16_euler_r_raw * precision_scaling_factor) / BNO055_EULER_DIV_DEG_int * (M_PI/180);
+
+        comres = bno055_read_linear_accel_x(&s16_linear_accel_x_raw);
+        if(comres != BNO055_SUCCESS) return;
+        
+        comres = bno055_read_linear_accel_y(&s16_linear_accel_y_raw);
+        if(comres != BNO055_SUCCESS) return;
+
+        comres = bno055_read_linear_accel_z(&s16_linear_accel_z_raw);
+        if(comres != BNO055_SUCCESS) return;
+
+        s32 s16_linear_accel_x_msq = (s16_linear_accel_x_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
+        s32 s16_linear_accel_y_msq = (s16_linear_accel_y_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
+        s32 s16_linear_accel_z_msq = (s16_linear_accel_z_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
+
+        // Update moving average filter for X axis
+        accelXSum -= accelXBuffer[accelXIndex];
+        accelXBuffer[accelXIndex] = s16_linear_accel_x_msq;
+        accelXSum += accelXBuffer[accelXIndex];
+        accelXIndex = (accelXIndex + 1) % FILTER_SIZE;
+        s16_linear_accel_x_msq = accelXSum / FILTER_SIZE;
+
+        // Update moving average filter for Y axis
+        accelYSum -= accelYBuffer[accelYIndex];
+        accelYBuffer[accelYIndex] = s16_linear_accel_y_msq;
+        accelYSum += accelYBuffer[accelYIndex];
+        accelYIndex = (accelYIndex + 1) % FILTER_SIZE;
+        s16_linear_accel_y_msq = accelYSum / FILTER_SIZE;
+        
+        // Update moving average filter for Z axis
+        accelZSum -= accelZBuffer[accelZIndex];
+        accelZBuffer[accelZIndex] = s16_linear_accel_z_msq;
+        accelZSum += accelZBuffer[accelZIndex];
+        accelZIndex = (accelZIndex + 1) % FILTER_SIZE;
+        s16_linear_accel_z_msq = accelZSum / FILTER_SIZE;
+
+        if((-110 <= s16_linear_accel_x_msq && s16_linear_accel_x_msq <= 110) && (-110 <= s16_linear_accel_y_msq && s16_linear_accel_y_msq <= 110))
+        {
+            m_velocityX = 0;
+            m_velocityY = 0;
+            m_velocityZ = 0;
+            m_velocityStationaryCounter++;
+        }
+        else {
+            m_velocityX += (s16_linear_accel_x_msq * (uint16_t)m_delta_time) / 1000;
+            m_velocityY += (s16_linear_accel_y_msq * (uint16_t)m_delta_time) / 1000;
+            m_velocityZ += (s16_linear_accel_z_msq * (uint16_t)m_delta_time) / 1000;
+            m_velocityStationaryCounter = 0;
+        }
+
+        // Convertir la velocidad del eje del auto a coordenadas globales
+        double velocityX_global = m_velocityY * sin(s16_euler_h_rad);
+        double velocityY_global = m_velocityY * cos(s16_euler_h_rad);
+
+        // Integración de velocidad para obtener posición
+        m_positionX += (velocityX_global * (uint16_t)m_delta_time) / 1000;
+        m_positionY += (velocityY_global * (uint16_t)m_delta_time) / 1000;
+
+        snprintf(buffer, sizeof(buffer), 
+            "@imu:%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;;\r\n",
+
+            s16_euler_r_deg / 1000, abs(s16_euler_r_deg % 1000),
+            s16_euler_p_deg / 1000, abs(s16_euler_p_deg % 1000),
+            s16_euler_h_deg / 1000, abs(s16_euler_h_deg % 1000),
+
+            s16_linear_accel_x_msq / 1000, abs(s16_linear_accel_x_msq % 1000),
+            s16_linear_accel_y_msq / 1000, abs(s16_linear_accel_y_msq % 1000),
+            s16_linear_accel_z_msq / 1000, abs(s16_linear_accel_z_msq % 1000),
+
+            m_velocityX / 1000, abs(m_velocityX % 1000),
+            m_velocityY / 1000, abs(m_velocityY % 1000),
+            m_velocityZ / 1000, abs(m_velocityZ % 1000),
+
+            m_positionX / 1000, abs(m_positionX % 1000),
+            m_positionY / 1000, abs(m_positionY % 1000),
+            m_positionZ / 1000, abs(m_positionZ % 1000));
+
+        m_serial.write(buffer,strlen(buffer));
     }
-    else {
-        m_velocityX += (s16_linear_accel_x_msq * (uint16_t)m_delta_time) / 1000;
-        m_velocityY += (s16_linear_accel_y_msq * (uint16_t)m_delta_time) / 1000;
-        m_velocityZ += (s16_linear_accel_z_msq * (uint16_t)m_delta_time) / 1000;
-        m_velocityStationaryCounter = 0;
-    }
-
-    // Convertir la velocidad del eje del auto a coordenadas globales
-    double velocityX_global = m_velocityY * sin(s16_euler_h_rad);
-    double velocityY_global = m_velocityY * cos(s16_euler_h_rad);
-
-    // Integración de velocidad para obtener posición
-    m_positionX += (velocityX_global * (uint16_t)m_delta_time) / 1000;
-    m_positionY += (velocityY_global * (uint16_t)m_delta_time) / 1000;
-
-
-    
-    snprintf(buffer, sizeof(buffer), 
-        "@imu:%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;;\r\n",
-
-        s16_euler_r_deg / 1000, abs(s16_euler_r_deg % 1000),
-        s16_euler_p_deg / 1000, abs(s16_euler_p_deg % 1000),
-        s16_euler_h_deg / 1000, abs(s16_euler_h_deg % 1000),
-
-        s16_linear_accel_x_msq / 1000, abs(s16_linear_accel_x_msq % 1000),
-        s16_linear_accel_y_msq / 1000, abs(s16_linear_accel_y_msq % 1000),
-        s16_linear_accel_z_msq / 1000, abs(s16_linear_accel_z_msq % 1000),
-
-        m_velocityX / 1000, abs(m_velocityX % 1000),
-        m_velocityY / 1000, abs(m_velocityY % 1000),
-        m_velocityZ / 1000, abs(m_velocityZ % 1000),
-
-        m_positionX / 1000, abs(m_positionX % 1000),
-        m_positionY / 1000, abs(m_positionY % 1000),
-        m_positionZ / 1000, abs(m_positionZ % 1000));
-
-    m_serial.write(buffer,strlen(buffer));
-}
 
 
 }; // namespace periodics
