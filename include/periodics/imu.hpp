@@ -4,18 +4,18 @@
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
-
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
-
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this
+ *    list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
-
+ *
  * 3. Neither the name of the copyright holder nor the names of its
  *    contributors may be used to endorse or promote products derived from
  *    this software without specific prior written permission.
-
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -65,7 +65,7 @@ namespace periodics
             static s8 BNO055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
             /* The API is used as I2C bus read */
             static s8 BNO055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
-            /* TThe delay routine */
+            /* The delay routine */
             static void BNO055_delay_msek(u32 msek);
             /* Serial callback implementation */
             void serialCallbackIMUcommand(char const * a, char * b);
@@ -106,6 +106,11 @@ namespace periodics
             uint8_t m_velocityStationaryCounter;
             uint64_t m_delta_time;
             uint8_t m_period;
+
+            /* Variables para almacenar la posición en los ejes */
+            s32 m_positionX;
+            s32 m_positionY;
+            s32 m_positionZ;
     }; // class CImu
 
 }; // namespace utils

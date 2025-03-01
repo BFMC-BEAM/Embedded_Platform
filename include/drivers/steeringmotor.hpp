@@ -77,7 +77,7 @@ namespace drivers
             /** @brief PWM output pin */
             PwmOut m_pwm_pin;
             /** @brief 0 default */
-            int zero_default = 153441; //0.07672070(7.6% duty cycle) * 20000µs(ms_period) * 100(scale factor)
+            int zero_default = 149900; //0.07672070(7.6% duty cycle) * 20000µs(ms_period) * 100(scale factor)
             /** @brief ms_period */
             int8_t ms_period = 20; // 20000µs
             /** @brief step_value */
@@ -97,8 +97,10 @@ namespace drivers
             // All the values have a scale factor applied (*100)
             const int steeringValueP[3] = {0, 150, 200};
             const int steeringValueN[3] = {0, -150, -200};
-            const int stepValues[3] = {1901, 1718, 1903};
-            const int zeroDefaultValues[3] = {153441, 154297, 153441};
+            //Bien balanceado
+            const int stepValues[3] = {2000, 1940, 2250}; 
+            const int zeroDefaultValues[3] = {151800, 153500, 156500};  
+
     }; // class ISteeringCommand
 }; // namespace drivers
 

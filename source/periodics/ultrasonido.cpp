@@ -108,19 +108,6 @@ namespace periodics
         }
         else
         {
-            if( l_distanceFront <= 30 && l_distanceBack <= 30 )
-            {
-                if (m_objectDetected == false)
-                {
-                    m_speedControl.setBrake();
-                    m_objectDetected = true;
-                }
-                else
-                {
-                    printf("@ultra:500;500;500;500;;\n\r");     //objetos detectados
-                }
-            }
-
             printf("@ultra:%d;%d;%d;%d;;\n\r"
                 , l_distanceFront/TOT_MUESTRAS
                 , l_distanceBack/TOT_MUESTRAS
