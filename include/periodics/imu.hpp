@@ -123,6 +123,9 @@ namespace periodics
             s32 accelXSum;
             s32 accelYSum;
             s32 accelZSum;
+
+            /* Variable contador para limitar la velocidad de envío del mensaje */
+            int m_messageSendCounter;
     }; // class CImu
 
 }; // namespace utils

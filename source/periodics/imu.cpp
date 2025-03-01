@@ -40,6 +40,8 @@
 #define BNO055_LINEAR_ACCEL_DIV_MSQ_int 100
 #define precision_scaling_factor        1000
 
+#define MAX_NOISE 110 // old:MAX_NOISE
+
 namespace periodics{
     /** \brief  Class constructor
      *
@@ -68,10 +70,11 @@ namespace periodics{
         , m_velocityZ(0)
         , m_velocityStationaryCounter(0)
         , m_delta_time(f_period.count())
+        , m_messageSendCounter(0)
     {
-        if(m_delta_time < 150){
-            setNewPeriod(150);
-            m_delta_time = 150;
+        if(m_delta_time < 10){
+            setNewPeriod(10);
+            m_delta_time = 10;
         }
         
         s32 comres = BNO055_ERROR;
@@ -431,6 +434,10 @@ namespace periodics{
         s32 s16_linear_accel_y_msq = (s16_linear_accel_y_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         s32 s16_linear_accel_z_msq = (s16_linear_accel_z_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
 
+        // Apply offset to X and Y accelerations
+        s16_linear_accel_x_msq -= 0;
+        s16_linear_accel_y_msq -= 0;
+        
         // Update moving average filter for X axis
         accelXSum -= accelXBuffer[accelXIndex];
         accelXBuffer[accelXIndex] = s16_linear_accel_x_msq;
@@ -452,48 +459,72 @@ namespace periodics{
         accelZIndex = (accelZIndex + 1) % FILTER_SIZE;
         s16_linear_accel_z_msq = accelZSum / FILTER_SIZE;
 
-        if((-110 <= s16_linear_accel_x_msq && s16_linear_accel_x_msq <= 110) && (-110 <= s16_linear_accel_y_msq && s16_linear_accel_y_msq <= 110))
+        if((-MAX_NOISE <= s16_linear_accel_x_msq && s16_linear_accel_x_msq <= MAX_NOISE) && (-MAX_NOISE <= s16_linear_accel_y_msq && s16_linear_accel_y_msq <= MAX_NOISE))
         {
-            m_velocityX = 0;
-            m_velocityY = 0;
-            m_velocityZ = 0;
-            m_velocityStationaryCounter++;
+            m_velocityX += 0 * m_delta_time; // Δt = m_delta_time
+            m_velocityY += 0 * m_delta_time;
+            m_velocityZ += 0 * m_delta_time;
+            m_velocityStationaryCounter += 1;
+            if (m_velocityStationaryCounter == 10)
+            {
+                m_velocityX = 0;
+                m_velocityY = 0;
+                m_velocityZ = 0;
+                m_velocityStationaryCounter = 0;
+            }
+            
         }
-        else {
-            m_velocityX += (s16_linear_accel_x_msq * (uint16_t)m_delta_time) / 1000;
+        else{
+            m_velocityX += (s16_linear_accel_x_msq * (uint16_t)m_delta_time) / 1000; // Δt = m_delta_time
             m_velocityY += (s16_linear_accel_y_msq * (uint16_t)m_delta_time) / 1000;
             m_velocityZ += (s16_linear_accel_z_msq * (uint16_t)m_delta_time) / 1000;
             m_velocityStationaryCounter = 0;
         }
+
+        // // Eliminar picos de velocidad que superen los 80 cm/s
+        // if (m_velocityX > 80000) m_velocityX = 80000;
+        // if (m_velocityX < -80000) m_velocityX = -80000;
+        // if (m_velocityY > 80000) m_velocityY = 80000;
+        // if (m_velocityY < -80000) m_velocityY = -80000;
+        // if (m_velocityZ > 80000) m_velocityZ = 80000;
+        // if (m_velocityZ < -80000) m_velocityZ = -80000;
 
         // Convertir la velocidad del eje del auto a coordenadas globales
         double velocityX_global = m_velocityY * sin(s16_euler_h_rad);
         double velocityY_global = m_velocityY * cos(s16_euler_h_rad);
 
         // Integración de velocidad para obtener posición
-        m_positionX += (velocityX_global * (uint16_t)m_delta_time) / 1000;
+        m_positionX += (velocityY_global * (uint16_t)m_delta_time) / 1000;
         m_positionY += (velocityY_global * (uint16_t)m_delta_time) / 1000;
 
-        snprintf(buffer, sizeof(buffer), 
-            "@imu:%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;;\r\n",
-
-            s16_euler_r_deg / 1000, abs(s16_euler_r_deg % 1000),
-            s16_euler_p_deg / 1000, abs(s16_euler_p_deg % 1000),
-            s16_euler_h_deg / 1000, abs(s16_euler_h_deg % 1000),
-
-            s16_linear_accel_x_msq / 1000, abs(s16_linear_accel_x_msq % 1000),
-            s16_linear_accel_y_msq / 1000, abs(s16_linear_accel_y_msq % 1000),
-            s16_linear_accel_z_msq / 1000, abs(s16_linear_accel_z_msq % 1000),
-
-            m_velocityX / 1000, abs(m_velocityX % 1000),
-            m_velocityY / 1000, abs(m_velocityY % 1000),
-            m_velocityZ / 1000, abs(m_velocityZ % 1000),
-
-            m_positionX / 1000, abs(m_positionX % 1000),
-            m_positionY / 1000, abs(m_positionY % 1000),
-            m_positionZ / 1000, abs(m_positionZ % 1000));
-
-        m_serial.write(buffer,strlen(buffer));
+        if (m_messageSendCounter >= 15)
+        {
+            m_messageSendCounter = 0;
+            snprintf(buffer, sizeof(buffer), 
+                "@imu:%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;%d.%03d;;\r\n",
+    
+                s16_euler_r_deg / 1000, abs(s16_euler_r_deg % 1000),
+                s16_euler_p_deg / 1000, abs(s16_euler_p_deg % 1000),
+                s16_euler_h_deg / 1000, abs(s16_euler_h_deg % 1000),
+    
+                s16_linear_accel_x_msq / 1000, abs(s16_linear_accel_x_msq % 1000),
+                s16_linear_accel_y_msq / 1000, abs(s16_linear_accel_y_msq % 1000),
+                s16_linear_accel_z_msq / 1000, abs(s16_linear_accel_z_msq % 1000),
+    
+                m_velocityX / 1000, abs(m_velocityX % 1000),
+                m_velocityY / 1000, abs(m_velocityY % 1000),
+                m_velocityZ / 1000, abs(m_velocityZ % 1000),
+    
+                m_positionX / 1000, abs(m_positionX % 1000),
+                m_positionY / 1000, abs(m_positionY % 1000),
+                m_positionZ / 1000, abs(m_positionZ % 1000));
+    
+            m_serial.write(buffer,strlen(buffer));
+        }
+        else
+        {
+            m_messageSendCounter++;
+        }
     }
 
 
