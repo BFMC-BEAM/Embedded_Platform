@@ -38,7 +38,7 @@
 #define _100_chars                      100
 #define BNO055_EULER_DIV_DEG_int        16
 #define BNO055_LINEAR_ACCEL_DIV_MSQ_int 100
-#define precision_scaling_factor        1000
+#define precision_scaling_factor        100
 
 #define MAX_NOISE 110 // old:MAX_NOISE
 
@@ -71,7 +71,39 @@ namespace periodics{
         , m_velocityStationaryCounter(0)
         , m_delta_time(f_period.count())
         , m_messageSendCounter(0)
+        , posX(0)
+        , posY(0)
+        , posZ(0)
+        , velX(0)
+        , velY(0)
+        , velZ(0)
     {
+
+
+        P[0][0] = 0.01; P[0][1] = 0;
+        P[1][0] = 0; P[1][1] = 0.01;
+
+        Q[0][0] = 0.01; Q[0][1] = 0;
+        Q[1][0] = 0; Q[1][1] = 0.01;  // Permitir cambios más suaves en posición y velocidad
+
+        R = 20;  // Aumentado para confiar menos en las mediciones ruidosas
+
+
+        
+
+        // Inicialización de las variables de estado
+        posX = 0;
+        posY = 0;
+        posZ = 0;
+        velX = 0;
+        velY = 0;
+        velZ = 0;
+        accelX = 0;
+        accelY = 0;
+        accelZ = 0;
+
+        last_time = duration_cast<std::chrono::milliseconds>(Kernel::Clock::now().time_since_epoch()).count();
+
         if(m_delta_time < 10){
             setNewPeriod(10);
             m_delta_time = 10;
@@ -385,8 +417,75 @@ namespace periodics{
     * \note If there are any issues reading from the BNO055 sensor, the method will exit early without sending data.
     */
 
-    void CImu::_run()
-    {
+    /* Predicción del estado usando Kalman */
+    void CImu::predict() {
+        // uint64_t current_time = duration_cast<std::chrono::milliseconds>(Kernel::Clock::now().time_since_epoch()).count();
+        dt = m_delta_time;//(current_time - last_time) / 1000.0f;  // Convertir a segundos
+        // last_time = current_time;
+    
+        // Predicción de estado: X = A * X + B * u
+        posX += velX * dt + 0.5 * accelX * dt * dt;
+        posY += velY * dt + 0.5 * accelY * dt * dt;
+        posZ += velZ * dt + 0.5 * accelZ * dt * dt;
+    
+        velX += accelX * dt;
+        velY += accelY * dt;
+        velZ += accelZ * dt;
+    
+        // Actualización de la covarianza del error: P = A * P * A^T + Q
+        P[0][0] += dt * P[1][0] + Q[0][0];
+        P[0][1] += dt * P[1][1] + Q[0][1];
+        P[1][0] += dt * P[0][1] + Q[1][0];
+        P[1][1] += dt * P[1][1] + Q[1][1];
+    }
+    /* Actualización con mediciones */
+    void CImu::update(s32 newAccelX, s32 newAccelY, s32 newAccelZ) {
+
+        // Escalado de las variables para el filtro de Kalman
+        accelX = (float)newAccelX;
+        accelY = (float)newAccelY;
+        accelZ = (float)newAccelZ;
+
+        accelX /= precision_scaling_factor;
+        accelY /= precision_scaling_factor;
+        accelZ /= precision_scaling_factor;
+        
+        // Ganancia de Kalman: K = P * H^T / (H * P * H^T + R)
+        float K[2] = { P[0][0] / (P[0][0] + R), P[1][0] / (P[1][0] + R) };
+    
+        // Corrección: X = X + K * (Z - H * X)
+        posX += K[0] * (accelX - posX);
+        velX += K[1] * (accelX - posX);
+
+        posY += K[0] * (accelY - posY);
+        velY += K[1] * (accelY - posY);
+
+        posZ += K[0] * (accelZ - posZ);
+        velZ += K[1] * (accelZ - posZ);
+
+        // Actualización de la covarianza del error: P = (I - K * H) * P
+        P[0][0] -= K[0] * P[0][0];
+        P[0][1] -= K[0] * P[0][1];
+        P[1][0] -= K[1] * P[1][0];
+        P[1][1] -= K[1] * P[1][1];
+        
+        // Escalado de las variables para enviarlas por UART
+        // accelX *= precision_scaling_factor;
+        // accelY *= precision_scaling_factor;
+        // accelZ *= precision_scaling_factor;
+
+        // velX *= precision_scaling_factor;
+        // velY *= precision_scaling_factor;
+        // velZ *= precision_scaling_factor;
+
+        // posX *= precision_scaling_factor;
+        // posY *= precision_scaling_factor;
+        // posZ *= precision_scaling_factor;
+
+    }
+    /* Método principal de ejecución */
+    void CImu::_run() {
+
         if(!m_isActive) return;
 
         char buffer[_100_chars];
@@ -434,68 +533,41 @@ namespace periodics{
         s32 s16_linear_accel_y_msq = (s16_linear_accel_y_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         s32 s16_linear_accel_z_msq = (s16_linear_accel_z_raw * precision_scaling_factor) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
 
-        // Apply offset to X and Y accelerations
-        s16_linear_accel_x_msq -= 0;
-        s16_linear_accel_y_msq -= 0;
-        
-        // Update moving average filter for X axis
+        // Aplicar filtro de media móvil a las aceleraciones
         accelXSum -= accelXBuffer[accelXIndex];
-        accelXBuffer[accelXIndex] = s16_linear_accel_x_msq;
-        accelXSum += accelXBuffer[accelXIndex];
-        accelXIndex = (accelXIndex + 1) % FILTER_SIZE;
-        s16_linear_accel_x_msq = accelXSum / FILTER_SIZE;
-
-        // Update moving average filter for Y axis
         accelYSum -= accelYBuffer[accelYIndex];
-        accelYBuffer[accelYIndex] = s16_linear_accel_y_msq;
-        accelYSum += accelYBuffer[accelYIndex];
-        accelYIndex = (accelYIndex + 1) % FILTER_SIZE;
-        s16_linear_accel_y_msq = accelYSum / FILTER_SIZE;
-        
-        // Update moving average filter for Z axis
         accelZSum -= accelZBuffer[accelZIndex];
+
+        accelXBuffer[accelXIndex] = s16_linear_accel_x_msq;
+        accelYBuffer[accelYIndex] = s16_linear_accel_y_msq;
         accelZBuffer[accelZIndex] = s16_linear_accel_z_msq;
+
+        accelXSum += accelXBuffer[accelXIndex];
+        accelYSum += accelYBuffer[accelYIndex];
         accelZSum += accelZBuffer[accelZIndex];
+
+        accelXIndex = (accelXIndex + 1) % FILTER_SIZE;
+        accelYIndex = (accelYIndex + 1) % FILTER_SIZE;
         accelZIndex = (accelZIndex + 1) % FILTER_SIZE;
+
+        s16_linear_accel_x_msq = accelXSum / FILTER_SIZE;
+        s16_linear_accel_y_msq = accelYSum / FILTER_SIZE;
         s16_linear_accel_z_msq = accelZSum / FILTER_SIZE;
 
-        if((-MAX_NOISE <= s16_linear_accel_x_msq && s16_linear_accel_x_msq <= MAX_NOISE) && (-MAX_NOISE <= s16_linear_accel_y_msq && s16_linear_accel_y_msq <= MAX_NOISE))
-        {
-            m_velocityX += 0 * m_delta_time; // Δt = m_delta_time
-            m_velocityY += 0 * m_delta_time;
-            m_velocityZ += 0 * m_delta_time;
-            m_velocityStationaryCounter += 1;
-            if (m_velocityStationaryCounter == 10)
-            {
-                m_velocityX = 0;
-                m_velocityY = 0;
-                m_velocityZ = 0;
-                m_velocityStationaryCounter = 0;
-            }
-            
-        }
-        else{
-            m_velocityX += (s16_linear_accel_x_msq * (uint16_t)m_delta_time) / 1000; // Δt = m_delta_time
-            m_velocityY += (s16_linear_accel_y_msq * (uint16_t)m_delta_time) / 1000;
-            m_velocityZ += (s16_linear_accel_z_msq * (uint16_t)m_delta_time) / 1000;
-            m_velocityStationaryCounter = 0;
-        }
+        predict();
+        update(s16_linear_accel_x_msq, s16_linear_accel_y_msq, s16_linear_accel_z_msq);
 
-        // // Eliminar picos de velocidad que superen los 80 cm/s
-        // if (m_velocityX > 80000) m_velocityX = 80000;
-        // if (m_velocityX < -80000) m_velocityX = -80000;
-        // if (m_velocityY > 80000) m_velocityY = 80000;
-        // if (m_velocityY < -80000) m_velocityY = -80000;
-        // if (m_velocityZ > 80000) m_velocityZ = 80000;
-        // if (m_velocityZ < -80000) m_velocityZ = -80000;
+        m_accelX = accelX * precision_scaling_factor;
+        m_accelY = accelY * precision_scaling_factor;
+        m_accelZ = accelZ * precision_scaling_factor;
 
-        // Convertir la velocidad del eje del auto a coordenadas globales
-        double velocityX_global = m_velocityY * sin(s16_euler_h_rad);
-        double velocityY_global = m_velocityY * cos(s16_euler_h_rad);
+        m_velocityX = velX * precision_scaling_factor;
+        m_velocityY = velY * precision_scaling_factor;
+        m_velocityZ = velZ * precision_scaling_factor;
 
-        // Integración de velocidad para obtener posición
-        m_positionX += (velocityY_global * (uint16_t)m_delta_time) / 1000;
-        m_positionY += (velocityY_global * (uint16_t)m_delta_time) / 1000;
+        m_positionX = posX * precision_scaling_factor;
+        m_positionY = posY * precision_scaling_factor;
+        m_positionZ = posZ * precision_scaling_factor;
 
         if (m_messageSendCounter >= 15)
         {
@@ -506,18 +578,19 @@ namespace periodics{
                 s16_euler_r_deg / 1000, abs(s16_euler_r_deg % 1000),
                 s16_euler_p_deg / 1000, abs(s16_euler_p_deg % 1000),
                 s16_euler_h_deg / 1000, abs(s16_euler_h_deg % 1000),
-    
-                s16_linear_accel_x_msq / 1000, abs(s16_linear_accel_x_msq % 1000),
-                s16_linear_accel_y_msq / 1000, abs(s16_linear_accel_y_msq % 1000),
-                s16_linear_accel_z_msq / 1000, abs(s16_linear_accel_z_msq % 1000),
-    
+                
+                m_accelX / 1000, abs(m_accelX % 1000),
+                m_accelY / 1000, abs(m_accelY % 1000),
+                m_accelZ / 1000, abs(m_accelZ % 1000),
+
                 m_velocityX / 1000, abs(m_velocityX % 1000),
                 m_velocityY / 1000, abs(m_velocityY % 1000),
                 m_velocityZ / 1000, abs(m_velocityZ % 1000),
-    
+
                 m_positionX / 1000, abs(m_positionX % 1000),
                 m_positionY / 1000, abs(m_positionY % 1000),
-                m_positionZ / 1000, abs(m_positionZ % 1000));
+                m_positionZ / 1000, abs(m_positionZ % 1000)
+            );
     
             m_serial.write(buffer,strlen(buffer));
         }

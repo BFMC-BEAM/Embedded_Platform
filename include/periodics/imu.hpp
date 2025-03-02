@@ -100,20 +100,49 @@ namespace periodics
             /* @brief Serial communication obj.  */
             UnbufferedSerial&      m_serial;
 
+            /* Variables de Kalman */
+            float posX, posY, posZ;  // Posición estimada (mm)
+            float velX, velY, velZ;  // Velocidad estimada (mm/s)
+            float accelX, accelY, accelZ;  // Aceleraciones medidas (mm/s² * 1000)
+
+            /* Matrices del filtro de Kalman */
+            float P[2][2];  // Covarianza del error (escalada por 1000)
+            float Q[2][2];  // Ruido del proceso (escalado por 1000)
+            float R;        // Ruido de la medición (escalado por 1000)
+
+            /* Parámetros de tiempo */
+            uint64_t last_time;
+            s32 dt;  // Delta de tiempo en ms
+
+            /* Métodos del filtro de Kalman */
+            void predict();
+            void update(s32 newAccelX, s32 newAccelY, s32 newAccelZ);
+
+
+            //-----------------------------------------------------//
+
+            s32 m_accelX;
+            s32 m_accelY;
+            s32 m_accelZ;
+
             s32 m_velocityX;
             s32 m_velocityY;
             s32 m_velocityZ;
-            uint8_t m_velocityStationaryCounter;
-            uint64_t m_delta_time;
-            uint8_t m_period;
 
-            /* Variables para almacenar la posición en los ejes */
             s32 m_positionX;
             s32 m_positionY;
             s32 m_positionZ;
 
+            float accelX_corrected;
+            float accelY_corrected;
+            float accelZ_corrected;
+
+            uint8_t m_velocityStationaryCounter;
+            uint64_t m_delta_time;
+            uint8_t m_period;
+
             /* Variables para el filtro de media móvil */
-            static const int FILTER_SIZE = 10;
+            static const int FILTER_SIZE = 50;
             s32 accelXBuffer[FILTER_SIZE];
             s32 accelYBuffer[FILTER_SIZE];
             s32 accelZBuffer[FILTER_SIZE];

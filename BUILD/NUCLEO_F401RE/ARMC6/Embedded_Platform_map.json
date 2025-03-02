@@ -2,10 +2,10 @@
     {
         "module": "[lib]/c_w.l",
         "size": {
-            ".text": 6394,
+            ".text": 6372,
             ".data": 16,
             ".bss": 348,
-            ".text-delta": 22,
+            ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -13,10 +13,10 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 2578,
+            ".text": 2602,
             ".data": 0,
             ".bss": 0,
-            ".text-delta": -162,
+            ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -44,17 +44,6 @@
         }
     },
     {
-        "module": "[lib]/m_wm.l",
-        "size": {
-            ".text": 2648,
-            ".data": 0,
-            ".bss": 0,
-            ".text-delta": 2648,
-            ".data-delta": 0,
-            ".bss-delta": 0
-        }
-    },
-    {
         "module": "anon$$obj.o",
         "size": {
             ".text": 32,
@@ -68,7 +57,7 @@
     {
         "module": "mbed-os/cmsis",
         "size": {
-            ".text": 10316,
+            ".text": 10360,
             ".data": 168,
             ".bss": 6738,
             ".text-delta": 0,
@@ -79,7 +68,7 @@
     {
         "module": "mbed-os/connectivity",
         "size": {
-            ".text": 817,
+            ".text": 831,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -134,9 +123,9 @@
     {
         "module": "mbed-os/rtos",
         "size": {
-            ".text": 446,
+            ".text": 500,
             ".data": 0,
-            ".bss": 0,
+            ".bss": 8,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -180,19 +169,19 @@
         "size": {
             ".text": 4099,
             ".data": 40,
-            ".bss": 2993,
+            ".bss": 3577,
             ".text-delta": 0,
             ".data-delta": 0,
-            ".bss-delta": 80
+            ".bss-delta": 0
         }
     },
     {
         "module": "source/periodics",
         "size": {
-            ".text": 7351,
+            ".text": 7947,
             ".data": 0,
             ".bss": 4,
-            ".text-delta": -228,
+            ".text-delta": -52,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -210,10 +199,10 @@
     },
     {
         "summary": {
-            "static_ram": 13008,
-            "static_ram_delta": 80,
-            "total_flash": 79698,
-            "total_flash_delta": 2280
+            "static_ram": 13600,
+            "static_ram_delta": 0,
+            "total_flash": 77760,
+            "total_flash_delta": -52
         }
     }
 ]
