@@ -13,10 +13,10 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 2602,
+            ".text": 3070,
             ".data": 0,
             ".bss": 0,
-            ".text-delta": 0,
+            ".text-delta": 468,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -169,7 +169,7 @@
         "size": {
             ".text": 4099,
             ".data": 40,
-            ".bss": 3577,
+            ".bss": 3601,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -178,10 +178,10 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 7947,
+            ".text": 9003,
             ".data": 0,
             ".bss": 4,
-            ".text-delta": -52,
+            ".text-delta": 48,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -199,10 +199,10 @@
     },
     {
         "summary": {
-            "static_ram": 13600,
+            "static_ram": 13624,
             "static_ram_delta": 0,
-            "total_flash": 77760,
-            "total_flash_delta": -52
+            "total_flash": 79284,
+            "total_flash_delta": 516
         }
     }
 ]

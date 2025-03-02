@@ -133,6 +133,14 @@ namespace periodics
             s32 m_positionY;
             s32 m_positionZ;
 
+            float prevAccelX;
+            float prevAccelY;
+            float prevAccelZ;
+
+            float prevVelX;
+            float prevVelY;
+            float prevVelZ;
+
             float accelX_corrected;
             float accelY_corrected;
             float accelZ_corrected;
