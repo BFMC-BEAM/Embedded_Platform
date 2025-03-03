@@ -648,9 +648,45 @@ namespace periodics{
         m_velocityY = velY * precision_scaling_factor;
         m_velocityZ = velZ * precision_scaling_factor;
 
-        m_positionX = posX * precision_scaling_factor;
-        m_positionY = posY * precision_scaling_factor;
-        m_positionZ = posZ * precision_scaling_factor;
+        m_accelX = (abs( (((float)s16_linear_accel_x_msq)/precision_scaling_factor) ) < 0.011) ? 0 : (((float)s16_linear_accel_x_msq)/precision_scaling_factor);
+        m_accelY = (abs( (((float)s16_linear_accel_y_msq)/precision_scaling_factor) ) < 0.011) ? 0 : (((float)s16_linear_accel_y_msq)/precision_scaling_factor);
+        m_accelZ = (abs( (((float)s16_linear_accel_z_msq)/precision_scaling_factor) ) < 0.011) ? 0 : (((float)s16_linear_accel_z_msq)/precision_scaling_factor);
+
+        m_delta_time = 0.01;
+
+        if((-0.2 <= (((float)s16_linear_accel_x_msq)/precision_scaling_factor) && (((float)s16_linear_accel_x_msq)/precision_scaling_factor) <= 0.2) 
+        && (-0.2 <= (((float)s16_linear_accel_y_msq)/precision_scaling_factor) && (((float)s16_linear_accel_y_msq)/precision_scaling_factor) <= 0.2))
+        {
+            m_velocityX += 0 * m_delta_time; // Δt = m_delta_time
+            m_velocityY += 0 * m_delta_time;
+            m_velocityZ += 0 * m_delta_time;
+            m_velocityStationaryCounter += 1;
+            if (m_velocityStationaryCounter == 10)
+            {
+                m_velocityX = 0;
+                m_velocityY = 0;
+                m_velocityZ = 0;
+                m_velocityStationaryCounter = 0;
+            }
+            
+        }
+        else{
+            m_velocityX += (m_accelX * m_delta_time) ; // Δt = m_delta_time = 10ms
+            m_velocityY += (m_accelY * m_delta_time) ;
+            m_velocityZ += (m_accelZ * m_delta_time) ;
+            m_velocityStationaryCounter = 0;
+        }
+        //MRUV
+        m_positionX = m_positionX + m_velocityX * m_delta_time + 0.5 * m_accelX * m_delta_time * m_delta_time ;
+        m_positionY = m_positionY + m_velocityY * m_delta_time + 0.5 * m_accelY * m_delta_time * m_delta_time ;
+        m_positionZ = m_positionZ + m_velocityZ * m_delta_time + 0.5 * m_accelZ * m_delta_time * m_delta_time ;
+
+        // MRU
+        // m_positionX = m_positionX + m_velocityX * m_delta_time ;
+        // m_positionY = m_positionY + m_velocityY * m_delta_time ;
+        // m_positionZ = m_positionZ + m_velocityZ * m_delta_time ;
+
+        // printf("AccelX: %d, AccelY: %d, AccelZ: %d\n", m_accelX, m_accelY, m_accelZ);
 
         if (m_messageSendCounter >= 15)
         {
