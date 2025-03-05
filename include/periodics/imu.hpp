@@ -41,6 +41,7 @@
 #include <utils/task.hpp>
 #include <brain/globalsv.hpp>
 #include <chrono>
+#include <Eigen/Dense>
 
 namespace periodics
 {
@@ -61,108 +62,36 @@ namespace periodics
             );
             /* Destructor */
             ~CImu();
-            /* The API is used as SPI bus write */
             static s8 BNO055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
-            /* The API is used as I2C bus read */
             static s8 BNO055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
-            /* The delay routine */
             static void BNO055_delay_msek(u32 msek);
-            /* Serial callback implementation */
             void serialCallbackIMUcommand(char const * a, char * b);
         private:
-            /*I2C init routine */
             virtual void I2C_routine(void);
-            /* This API is an example for reading sensor data */
-            // s32 bno055_data_readout_template(void);
-            /* Run method */
             virtual void    _run();
-
-            /*----------------------------------------------------------------------------*
-            *  struct bno055_t parameters can be accessed by using BNO055
-            *  BNO055_t having the following parameters
-            *  Bus write function pointer: BNO055_WR_FUNC_PTR
-            *  Bus read function pointer: BNO055_RD_FUNC_PTR
-            *  Burst read function pointer: BNO055_BRD_FUNC_PTR
-            *  Delay function pointer: delay_msec
-            *  I2C address: dev_addr
-            *  Chip id of the sensor: chip_id
-            *---------------------------------------------------------------------------*/
             struct bno055_t bno055;
-
-            /*---------------------------------------------------------------------------------------------*
-            *  The static pointer variable member i2c_instance will be used inside the I2C bus APIs 
-            *----------------------------------------------------------------------------------------------*/
             static I2C* i2c_instance;
-
-            /** @brief Active flag  */
             bool            m_isActive;
-
-            /* @brief Serial communication obj.  */
             UnbufferedSerial&      m_serial;
-
-            /* Variables de Kalman */
-            float posX, posY, posZ;  // Posición estimada (mm)
-            float velX, velY, velZ;  // Velocidad estimada (mm/s)
-            float accelX, accelY, accelZ;  // Aceleraciones medidas (mm/s² * 1000)
-
-            /* Matrices del filtro de Kalman */
-            float P[2][2];  // Covarianza del error (escalada por 1000)
-            float Q[2][2];  // Ruido del proceso (escalado por 1000)
-            float R;        // Ruido de la medición (escalado por 1000)
-
-            /* Parámetros de tiempo */
-            uint64_t last_time;
-            s32 dt;  // Delta de tiempo en ms
-
-            /* Métodos del filtro de Kalman */
-            void predict();
-            void update(s32 newAccelX, s32 newAccelY, s32 newAccelZ);
-
-
-            //-----------------------------------------------------//
-
-            s32 m_accelX;
-            s32 m_accelY;
-            s32 m_accelZ;
-
-            s32 m_velocityX;
-            s32 m_velocityY;
-            s32 m_velocityZ;
-
-            s32 m_positionX;
-            s32 m_positionY;
-            s32 m_positionZ;
-
-            float prevAccelX;
-            float prevAccelY;
-            float prevAccelZ;
-
-            float prevVelX;
-            float prevVelY;
-            float prevVelZ;
-
-            float accelX_corrected;
-            float accelY_corrected;
-            float accelZ_corrected;
-
-            uint8_t m_velocityStationaryCounter;
-            uint64_t m_delta_time;
-            uint8_t m_period;
-
-            /* Variables para el filtro de media móvil */
-            static const int FILTER_SIZE = 50;
-            s32 accelXBuffer[FILTER_SIZE];
-            s32 accelYBuffer[FILTER_SIZE];
-            s32 accelZBuffer[FILTER_SIZE];
-            int accelXIndex;
-            int accelYIndex;
-            int accelZIndex;
-            s32 accelXSum;
-            s32 accelYSum;
-            s32 accelZSum;
+            s32 m_delta_time;
 
             /* Variable contador para limitar la velocidad de envío del mensaje */
             int m_messageSendCounter;
+
+
+            void predict(const Eigen::Vector3d& acceleration);
+            void update(const Eigen::Vector3d& position);
+
+            double dt;
+
+            Eigen::Matrix<double, 6, 6> A_;
+            Eigen::Matrix<double, 6, 3> B_;
+            Eigen::Matrix<double, 3, 6> H_;
+            Eigen::Matrix<double, 6, 6> Q_;
+            Eigen::Matrix<double, 3, 3> R_;
+            Eigen::Matrix<double, 6, 6> P_;
+            Eigen::Matrix<double, 6, 1> x_;
+
     }; // class CImu
 
 }; // namespace utils

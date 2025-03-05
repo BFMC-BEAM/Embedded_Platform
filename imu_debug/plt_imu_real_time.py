@@ -49,55 +49,17 @@ def read_imu_data(port='/dev/ttyACM0', baudrate=115200):
                     current_time = time.time()
                     time_data.append(current_time)
 
-                    accelx_data.append(accelx / 10)
-                    accely_data.append(accely / 10)
-                    accelz_data.append(accelz / 10)
+                    accelx_data.append(accelx / 1)
+                    accely_data.append(accely / 1)
+                    accelz_data.append(accelz / 1)
 
-                    velx_data.append(velx / 10)
-                    vely_data.append(vely / 10)
-                    velz_data.append(velz / 10)
+                    velx_data.append(velx / 1)
+                    vely_data.append(vely / 1)
+                    velz_data.append(velz / 1)
 
-                    x_data.append(x / 10)
-                    y_data.append(y / 10)
-                    z_data.append(z / 10)
-
-
-                    # accelx = 0 if abs(accelx/1000) < 0.02 else accelx/1000
-                    # accely = 0 if abs(accely/1000) < 0.02 else accely/1000
-                    # accelz = 0 if abs(accelz/1000) < 0.02 else accelz/1000
-
-                    # accelx_data.append(accelx)
-                    # accely_data.append(accely)
-                    # accelz_data.append(accelz)
-
-                    # if len(accelx_data) > 1:
-                    #     dt = 0.15  # Time interval between samples
-                    #     velx = velx_data[-1] + accelx * dt
-                    #     vely = vely_data[-1] + accely * dt
-                    #     velz = velz_data[-1] + accelz * dt
-                    # else:
-                    #     velx = 0
-                    #     vely = 0
-                    #     velz = 0
-
-                    # if len(accelx_data) > 10 and all(a == accelx_data[-1] for a in accelx_data[-10:]):
-                    #     velx = 0
-                    # if len(accely_data) > 10 and all(a == accely_data[-1] for a in accely_data[-10:]):
-                    #     vely = 0
-                    # if len(accelz_data) > 10 and all(a == accelz_data[-1] for a in accelz_data[-10:]):
-                    #     velz = 0
-
-                    # velx_data.append(velx)
-                    # vely_data.append(vely)
-                    # velz_data.append(velz)
-
-                    # x = x_data[-1] + velx * dt if x_data else 0
-                    # y = y_data[-1] + vely * dt if y_data else 0
-                    # z = z_data[-1] + velz * dt if z_data else 0
-
-                    # x_data.append(x)
-                    # y_data.append(y)
-                    # z_data.append(z)
+                    x_data.append(x / 1)
+                    y_data.append(y / 1)
+                    z_data.append(z / 1)
                     
                     yaw_data.append(yaw)
                 except ValueError as e:
