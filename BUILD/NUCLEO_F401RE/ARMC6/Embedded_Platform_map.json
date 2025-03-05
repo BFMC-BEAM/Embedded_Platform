@@ -180,7 +180,7 @@
         "size": {
             ".text": 4202,
             ".data": 40,
-            ".bss": 4102,
+            ".bss": 3398,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -189,10 +189,10 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 100257,
+            ".text": 98265,
             ".data": 0,
             ".bss": 30,
-            ".text-delta": 16,
+            ".text-delta": 126,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -210,10 +210,10 @@
     },
     {
         "summary": {
-            "static_ram": 17109,
+            "static_ram": 16405,
             "static_ram_delta": 0,
-            "total_flash": 253739,
-            "total_flash_delta": 16
+            "total_flash": 251747,
+            "total_flash_delta": 126
         }
     }
 ]

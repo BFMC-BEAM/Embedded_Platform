@@ -45,7 +45,7 @@ def read_imu_data(port='/dev/ttyACM0', baudrate=115200):
             data = line[5:].split(';')
             if len(data) >= 12:
                 try:
-                    pitch , roll, yaw, accelx, accely, accelz , velx, vely, velz, x, y, z = map(float, data[:12])
+                    yaw , pitch, rol, accelx, accely, accelz, velx, vely, velz, x,y,z = map(float, data[:12])
                     current_time = time.time()
                     time_data.append(current_time)
 
@@ -114,8 +114,8 @@ def update_plot(frame):
     ax3.set_title('2D Position (X vs Y)')
     ax3.set_xlabel('X Position')
     ax3.set_ylabel('Y Position')
-    ax3.set_xlim(-4, 4)
-    ax3.set_ylim(-4, 4)
+    ax3.set_xlim(-6, 6)
+    ax3.set_ylim(-6, 6)
     ax3.legend()
     ax3.grid(True)
 

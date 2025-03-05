@@ -53,31 +53,34 @@ namespace periodics{
         , m_isActive(false)
         , m_serial(f_serial)
     {
-        dt = 0.08;
+        dt = 0.01;
 
-        A_ << 1, dt, 0, 0, 0, 0,
-              0, 1, 0, 0, 0, 0,
-              0, 0, 1, dt, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 0, 0, 0, 1, dt,
-              0, 0, 0, 0, 0, 1;
+        A_ << 1, dt, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, dt,
+              0, 0, 0, 1;
 
-        B_ << 0.5 * dt * dt, 0, 0,
-              dt, 0, 0,
-              0, 0.5 * dt * dt, 0,
-              0, dt, 0,
-              0, 0, 0.5 * dt * dt,
-              0, 0, dt;
+        B_ << 0.5 * dt * dt, 0,
+              dt, 0,
+              0, 0.5 * dt * dt,
+              0, dt;
 
-        H_ << 1, 0, 0, 0, 0, 0,
-              0, 0, 1, 0, 0, 0,
-              0, 0, 0, 0, 1, 0;
+        H_ << 1, 0, 0, 0,
+              0, 0, 1, 0;
 
-        Q_ = Eigen::MatrixXd::Identity(6, 6) * 0.01; // Ajusta la incertidumbre del proceso
-        R_ = Eigen::MatrixXd::Identity(3, 3) * 0.1; // Ajusta la incertidumbre de la medición
-        P_ = Eigen::MatrixXd::Identity(6, 6) * 1; // Increase initial uncertainty
+        Q_ = Eigen::MatrixXd::Identity(4, 4) * 0.01;
+        R_ = Eigen::MatrixXd::Identity(2, 2) * 0.1;
+        P_ = Eigen::MatrixXd::Identity(4, 4) * 1;
 
-        x_ = Eigen::VectorXd::Zero(6);
+        x_ = Eigen::VectorXd::Zero(4);
+
+        // Inicializar la posición
+        x_(0) = 0.7; // Posición en X
+        x_(2) = 4.0; // Posición en Y
+
+        // Inicializar las velocidades a cero (o a un valor conocido)
+        x_(1) = 0.0; // Velocidad en X
+        x_(3) = 0.0; // Velocidad en Y
 
         m_messageSendCounter = 0;
 
@@ -250,18 +253,18 @@ namespace periodics{
         ThisThread::sleep_for(chrono::milliseconds(msek));
     }
 
-    void CImu::predict(const Eigen::Vector3d& acceleration) {
+    void CImu::predict(const Eigen::Vector2d& acceleration) {
         x_ = A_ * x_ + B_ * acceleration;
         P_ = A_ * P_ * A_.transpose() + Q_;
     }
 
-    void CImu::update(const Eigen::Vector3d& position) {
-        Eigen::Vector3d z = position;
-        Eigen::Vector3d y = z - H_ * x_;
+    void CImu::update(const Eigen::Vector2d& position) {
+        Eigen::Vector2d z = position;
+        Eigen::Vector2d y = z - H_ * x_;
         Eigen::MatrixXd S = H_ * P_ * H_.transpose() + R_;
         Eigen::MatrixXd K = P_ * H_.transpose() * S.inverse();
         x_ = x_ + K * y;
-        P_ = (Eigen::MatrixXd::Identity(6, 6) - K * H_) * P_;
+        P_ = (Eigen::MatrixXd::Identity(4, 4) - K * H_) * P_;
     }
 
     void CImu::_run() {
@@ -302,16 +305,15 @@ namespace periodics{
         comres = bno055_read_linear_accel_z(&s16_linear_accel_z_raw);
         if(comres != BNO055_SUCCESS) return;
         
-        double accelx = (double)s16_linear_accel_x_raw / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-        double accely = (double)s16_linear_accel_y_raw / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-        double accelz = (double)s16_linear_accel_z_raw / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-
-        Eigen::Vector3d acceleration(accelx, accely, accelz);
-        Eigen::Vector3d position(0,0,0);
+        double accelx = ((double)s16_linear_accel_x_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
+        double accely = ((double)s16_linear_accel_y_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
+        double accelz = ((double)s16_linear_accel_z_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         
+        Eigen::Vector2d acceleration(accelx, accely);
+        Eigen::Vector2d position(x_(0), x_(2));
+
         predict(acceleration);
         update(position);
-        
         
         if (m_messageSendCounter >= 10)
         {
@@ -322,18 +324,18 @@ namespace periodics{
                 (float)(s16_euler_h_raw/16.0), 
                 (float)(s16_euler_p_raw/16.0), 
                 (float)(s16_euler_r_raw/16.0), 
+
+                accelx,
+                accely,
+                0.0,
                 
                 x_(0), 
                 x_(2), 
-                x_(4),
-                
                 0.0,
-                0.0,
-                0.0,
-                
+
                 x_(1), 
                 x_(3), 
-                x_(5)
+                0.0
             );
             m_serial.write(buffer,strlen(buffer));    
         }

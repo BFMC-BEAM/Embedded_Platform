@@ -79,18 +79,18 @@ namespace periodics
             int m_messageSendCounter;
 
 
-            void predict(const Eigen::Vector3d& acceleration);
-            void update(const Eigen::Vector3d& position);
+            void predict(const Eigen::Vector2d& acceleration);
+            void update(const Eigen::Vector2d& position);
 
             double dt;
 
-            Eigen::Matrix<double, 6, 6> A_;
-            Eigen::Matrix<double, 6, 3> B_;
-            Eigen::Matrix<double, 3, 6> H_;
-            Eigen::Matrix<double, 6, 6> Q_;
-            Eigen::Matrix<double, 3, 3> R_;
-            Eigen::Matrix<double, 6, 6> P_;
-            Eigen::Matrix<double, 6, 1> x_;
+            Eigen::Matrix<double, 4, 4> A_;
+            Eigen::Matrix<double, 4, 2> B_;
+            Eigen::Matrix<double, 2, 4> H_;
+            Eigen::Matrix<double, 4, 4> Q_;
+            Eigen::Matrix<double, 2, 2> R_;
+            Eigen::Matrix<double, 4, 4> P_;
+            Eigen::Matrix<double, 4, 1> x_;
 
     }; // class CImu
 
