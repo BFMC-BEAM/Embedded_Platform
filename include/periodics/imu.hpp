@@ -66,6 +66,7 @@ namespace periodics
             static s8 BNO055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
             static void BNO055_delay_msek(u32 msek);
             void serialCallbackIMUcommand(char const * a, char * b);
+            void serialCallbackSPEEDcommand(char const * a, char * b);
         private:
             virtual void I2C_routine(void);
             virtual void    _run();
@@ -91,6 +92,13 @@ namespace periodics
             Eigen::Matrix<double, 2, 2> R_;
             Eigen::Matrix<double, 4, 4> P_;
             Eigen::Matrix<double, 4, 1> x_;
+
+            int m_velocityStationaryCounter;
+
+            float m_velocityX;
+            float m_velocityY;
+
+            int m_speed;
 
     }; // class CImu
 

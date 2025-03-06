@@ -68,8 +68,8 @@ namespace periodics{
         H_ << 1, 0, 0, 0,
               0, 0, 1, 0;
 
-        Q_ = Eigen::MatrixXd::Identity(4, 4) * 0.01;
-        R_ = Eigen::MatrixXd::Identity(2, 2) * 0.1;
+        Q_ = Eigen::MatrixXd::Identity(4, 4) * 0.001;
+        R_ = Eigen::MatrixXd::Identity(2, 2) * 5;
         P_ = Eigen::MatrixXd::Identity(4, 4) * 1;
 
         x_ = Eigen::VectorXd::Zero(4);
@@ -166,6 +166,26 @@ namespace periodics{
             }
             
         }else{
+            sprintf(b,"syntax error");
+        }
+    }
+
+    void CImu::serialCallbackSPEEDcommand(char const * a, char * b)
+    {
+        int l_speed;
+        uint32_t l_res = sscanf(a,"%d",&l_speed);
+        if (1 == l_res)
+        {
+            if(uint8_globalsV_value_of_kl == 30)
+            {
+                m_speed = l_speed;
+            }
+            else{
+                sprintf(b,"kl 30 is required!!");
+            }
+        }
+        else
+        {
             sprintf(b,"syntax error");
         }
     }
@@ -294,7 +314,6 @@ namespace periodics{
 
         s16 s16_linear_accel_x_raw = BNO055_INIT_VALUE;
         s16 s16_linear_accel_y_raw = BNO055_INIT_VALUE;
-        s16 s16_linear_accel_z_raw = BNO055_INIT_VALUE;
 
         comres = bno055_read_linear_accel_x(&s16_linear_accel_x_raw);
         if(comres != BNO055_SUCCESS) return;
@@ -302,24 +321,44 @@ namespace periodics{
         comres = bno055_read_linear_accel_y(&s16_linear_accel_y_raw);
         if(comres != BNO055_SUCCESS) return;
 
-        comres = bno055_read_linear_accel_z(&s16_linear_accel_z_raw);
-        if(comres != BNO055_SUCCESS) return;
         
         double accelx = ((double)s16_linear_accel_x_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         double accely = ((double)s16_linear_accel_y_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-        double accelz = ((double)s16_linear_accel_z_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
+        accelx = (accelx > -0.1 && accelx < 0.1) ? 0.0 : accelx;
+        accely = (accely > -0.1 && accely < 0.1) ? 0.0 : accely;
         
         Eigen::Vector2d acceleration(accelx, accely);
         Eigen::Vector2d position(x_(0), x_(2));
 
+        if((-0.110 <= accelx && accelx <= 0.110) && (-0.110 <= accely && accely <= 0.110))
+        {
+            m_velocityX = 0;
+            m_velocityY = 0;
+            m_velocityStationaryCounter++;
+        }
+        else {
+            m_velocityX += (accelx * dt);
+            m_velocityY += (accely * dt);
+            m_velocityStationaryCounter = 0;
+        }
+
         predict(acceleration);
         update(position);
+
+        double yaw =  ((double)s16_euler_h_raw/16.0) * M_PI / 180.0;
+
+        // Convertir la posición del eje del auto a coordenadas globales
+        double dx_relativo = x_(3); // Posición relativa en x
+        double dy_relativo = x_(1); //Posicion relativa en y.
+
+        double dx = dx_relativo * cos(yaw) - dy_relativo * sin(yaw);
+        double dy = dx_relativo * sin(yaw) + dy_relativo * cos(yaw);
         
-        if (m_messageSendCounter >= 10)
+        if (m_messageSendCounter >= 20)
         {
 
             m_messageSendCounter = 0;
-            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;;\r\n",  
+            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.6f;;\r\n",  
             
                 (float)(s16_euler_h_raw/16.0), 
                 (float)(s16_euler_p_raw/16.0), 
@@ -327,15 +366,15 @@ namespace periodics{
 
                 accelx,
                 accely,
-                0.0,
+                dx,
                 
-                x_(0), 
-                x_(2), 
-                0.0,
+                m_velocityX, 
+                m_velocityY, 
+                dy,
 
                 x_(1), 
                 x_(3), 
-                0.0
+                m_speed
             );
             m_serial.write(buffer,strlen(buffer));    
         }
@@ -346,5 +385,5 @@ namespace periodics{
         
     }
 
-
 }; // namespace periodics
+

@@ -92,7 +92,8 @@ drivers::CSerialMonitor::CSerialSubscriberMap g_serialMonitorSubscribers = {
     {"battery",        mbed::callback(&g_totalvoltage,      &periodics::CTotalVoltage::serialCallbackTOTALVcommand)},
     {"instant",        mbed::callback(&g_instantconsumption,&periodics::CInstantConsumption::serialCallbackINSTANTcommand)},
     {"imu",            mbed::callback(&g_imu,               &periodics::CImu::serialCallbackIMUcommand)},
-    {"ultra",          mbed::callback(&g_ultrasonido,               &periodics::CUltrasonido::serialCallbackULTRAcommand)},
+    {"speed",            mbed::callback(&g_imu,               &periodics::CImu::serialCallbackSPEEDcommand)},
+    {"ultra",          mbed::callback(&g_ultrasonido,       &periodics::CUltrasonido::serialCallbackULTRAcommand)},
     {"kl",             mbed::callback(&g_klmanager,         &brain::CKlmanager::serialCallbackKLCommand)},
     {"batteryCapacity",mbed::callback(&g_batteryManager,    &brain::CBatterymanager::serialCallbackBATTERYCommand)},
     {"resourceMonitor",mbed::callback(&g_resourceMonitor,   &periodics::CResourcemonitor::serialCallbackRESMONCommand),}

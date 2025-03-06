@@ -13,7 +13,7 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 3824,
+            ".text": 3908,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -46,7 +46,7 @@
     {
         "module": "[lib]/m_wm.l",
         "size": {
-            ".text": 746,
+            ".text": 3562,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -167,7 +167,7 @@
     {
         "module": "source/drivers",
         "size": {
-            ".text": 5684,
+            ".text": 5606,
             ".data": 0,
             ".bss": 4,
             ".text-delta": 0,
@@ -178,10 +178,10 @@
     {
         "module": "source/main.o",
         "size": {
-            ".text": 4202,
+            ".text": 4262,
             ".data": 40,
-            ".bss": 3398,
-            ".text-delta": 0,
+            ".bss": 3414,
+            ".text-delta": 60,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -189,10 +189,10 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 98265,
+            ".text": 99009,
             ".data": 0,
             ".bss": 30,
-            ".text-delta": 126,
+            ".text-delta": 112,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -210,10 +210,10 @@
     },
     {
         "summary": {
-            "static_ram": 16405,
+            "static_ram": 16421,
             "static_ram_delta": 0,
-            "total_flash": 251747,
-            "total_flash_delta": 126
+            "total_flash": 255373,
+            "total_flash_delta": 172
         }
     }
 ]
