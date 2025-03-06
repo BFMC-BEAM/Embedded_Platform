@@ -98,8 +98,6 @@ namespace periodics
             float m_velocityX;
             float m_velocityY;
 
-            int m_speed;
-
     }; // class CImu
 
 }; // namespace utils

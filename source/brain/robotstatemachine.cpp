@@ -34,6 +34,7 @@
 #define scale_ds_to_ms 100
 
 namespace brain{
+    int g_speed = 0;
 
     /**
      * @brief CRobotStateMachine Class constructor
@@ -83,6 +84,7 @@ namespace brain{
             // speed state - control the dc motor rotation speed and the steering angle. 
             case 1:
                 m_speedingControl.setSpeed(-m_speed); // Set the reference speed
+                g_speed = m_speed;
                 snprintf(buffer, sizeof(buffer), "@speed:%d;;\r\n", m_speed);
                 m_serialPort.write(buffer, strlen(buffer));
                 m_state = 0;
@@ -150,6 +152,7 @@ namespace brain{
                 m_state = 1;
 
                 m_speed = l_speed;
+                g_speed = l_speed;
             }
             else{
                 sprintf(b,"kl 30 is required!!");

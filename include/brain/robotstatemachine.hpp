@@ -43,7 +43,6 @@
 #include <brain/globalsv.hpp>
 
 #include <chrono>
-
 namespace brain
 {
     /**
@@ -52,6 +51,7 @@ namespace brain
      *  The state of robot can change by external signal received from a higher level controller.   
      * 
      */
+    extern int g_speed;
     class CRobotStateMachine: public utils::CTask
     {
         public:

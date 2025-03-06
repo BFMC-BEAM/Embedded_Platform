@@ -31,6 +31,7 @@
 
 #include <periodics/imu.hpp>
 #include <cmath>  // Para sin(), cos(), M_PI
+#include "brain/robotstatemachine.hpp"
 
 #define M_PI 3.1415926535897932
 
@@ -166,26 +167,6 @@ namespace periodics{
             }
             
         }else{
-            sprintf(b,"syntax error");
-        }
-    }
-
-    void CImu::serialCallbackSPEEDcommand(char const * a, char * b)
-    {
-        int l_speed;
-        uint32_t l_res = sscanf(a,"%d",&l_speed);
-        if (1 == l_res)
-        {
-            if(uint8_globalsV_value_of_kl == 30)
-            {
-                m_speed = l_speed;
-            }
-            else{
-                sprintf(b,"kl 30 is required!!");
-            }
-        }
-        else
-        {
             sprintf(b,"syntax error");
         }
     }
@@ -358,7 +339,7 @@ namespace periodics{
         {
 
             m_messageSendCounter = 0;
-            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.6f;;\r\n",  
+            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%d;;\r\n",  
             
                 (float)(s16_euler_h_raw/16.0), 
                 (float)(s16_euler_p_raw/16.0), 
@@ -371,10 +352,10 @@ namespace periodics{
                 m_velocityX, 
                 m_velocityY, 
                 dy,
-
+            
                 x_(1), 
                 x_(3), 
-                m_speed
+                brain::g_speed
             );
             m_serial.write(buffer,strlen(buffer));    
         }
