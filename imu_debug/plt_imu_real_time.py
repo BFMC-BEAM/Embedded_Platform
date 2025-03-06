@@ -57,8 +57,8 @@ def read_imu_data(port='/dev/ttyACM0', baudrate=115200):
                     vely_data.append(vely / 1)
                     velz_data.append(velz / 1)
 
-                    x_data.append(accelz / 1)
-                    y_data.append(velz / 1)
+                    x_data.append(velx / 1)
+                    y_data.append(vely / 1)
                     z_data.append(z / 1)
                     
                     yaw_data.append(yaw)

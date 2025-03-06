@@ -95,8 +95,8 @@ namespace periodics
 
             int m_velocityStationaryCounter;
 
-            float m_velocityX;
-            float m_velocityY;
+            double dx;
+            double dy;
 
     }; // class CImu
 

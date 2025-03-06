@@ -156,10 +156,10 @@
     {
         "module": "source/brain",
         "size": {
-            ".text": 2009,
+            ".text": 2011,
             ".data": 2,
             ".bss": 66,
-            ".text-delta": 8,
+            ".text-delta": 2,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -180,7 +180,7 @@
         "size": {
             ".text": 4202,
             ".data": 40,
-            ".bss": 3414,
+            ".bss": 3430,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -189,12 +189,12 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 98895,
+            ".text": 14662,
             ".data": 0,
-            ".bss": 30,
-            ".text-delta": -2,
+            ".bss": 14,
+            ".text-delta": -83945,
             ".data-delta": 0,
-            ".bss-delta": 0
+            ".bss-delta": -16
         }
     },
     {
@@ -211,9 +211,9 @@
     {
         "summary": {
             "static_ram": 16425,
-            "static_ram_delta": 0,
-            "total_flash": 255217,
-            "total_flash_delta": 6
+            "static_ram_delta": -16,
+            "total_flash": 170986,
+            "total_flash_delta": -83943
         }
     }
 ]

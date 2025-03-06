@@ -305,26 +305,26 @@ namespace periodics{
         
         double accelx = ((double)s16_linear_accel_x_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         double accely = ((double)s16_linear_accel_y_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-        accelx = (accelx > -0.1 && accelx < 0.1) ? 0.0 : accelx;
-        accely = (accely > -0.1 && accely < 0.1) ? 0.0 : accely;
+        // accelx = (accelx > -0.1 && accelx < 0.1) ? 0.0 : accelx;
+        // accely = (accely > -0.1 && accely < 0.1) ? 0.0 : accely;
         
-        Eigen::Vector2d acceleration(accelx, accely);
-        Eigen::Vector2d position(x_(0), x_(2));
+        // Eigen::Vector2d acceleration(accelx, accely);
+        // Eigen::Vector2d position(x_(0), x_(2));
 
-        if((-0.110 <= accelx && accelx <= 0.110) && (-0.110 <= accely && accely <= 0.110))
-        {
-            m_velocityX = 0;
-            m_velocityY = 0;
-            m_velocityStationaryCounter++;
-        }
-        else {
-            m_velocityX += (accelx * dt);
-            m_velocityY += (accely * dt);
-            m_velocityStationaryCounter = 0;
-        }
+        // if((-0.110 <= accelx && accelx <= 0.110) && (-0.110 <= accely && accely <= 0.110))
+        // {
+        //     m_velocityX = 0;
+        //     m_velocityY = 0;
+        //     m_velocityStationaryCounter++;
+        // }
+        // else {
+        //     m_velocityX += (accelx * dt);
+        //     m_velocityY += (accely * dt);
+        //     m_velocityStationaryCounter = 0;
+        // }
 
-        predict(acceleration);
-        update(position);
+        // predict(acceleration);
+        // update(position);
 
         double yaw =  ((double)s16_euler_h_raw/16.0) * M_PI / 180.0;
 
@@ -332,9 +332,12 @@ namespace periodics{
         double dx_relativo = x_(3); // Posición relativa en x
         double dy_relativo = x_(1); //Posicion relativa en y.
 
-        double dx = dx_relativo * cos(yaw) - dy_relativo * sin(yaw);
-        double dy = dx_relativo * sin(yaw) + dy_relativo * cos(yaw);
+        // double dx = dx_relativo * cos(yaw) - dy_relativo * sin(yaw);
+        // double dy = dx_relativo * sin(yaw) + dy_relativo * cos(yaw);
         
+        dx += -brain::g_speed/10.0 * 0.01 * cos(yaw);
+        dy += -brain::g_speed/10.0 * 0.01 * sin(yaw); 
+
         if (m_messageSendCounter >= 20)
         {
 
@@ -349,8 +352,8 @@ namespace periodics{
                 accely,
                 dx,
                 
-                m_velocityX, 
-                m_velocityY, 
+                dx, 
+                dy, 
                 dy,
             
                 x_(1), 
