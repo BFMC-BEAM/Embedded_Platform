@@ -59,34 +59,6 @@ namespace periodics{
         , m_serial(f_serial)
     {
         dt = 0.01;
-
-        A_ << 1, dt, 0, 0,
-              0, 1, 0, 0,
-              0, 0, 1, dt,
-              0, 0, 0, 1;
-
-        B_ << 0.5 * dt * dt, 0,
-              dt, 0,
-              0, 0.5 * dt * dt,
-              0, dt;
-
-        H_ << 1, 0, 0, 0,
-              0, 0, 1, 0;
-
-        Q_ = Eigen::MatrixXd::Identity(4, 4) * 0.001;
-        R_ = Eigen::MatrixXd::Identity(2, 2) * 5;
-        P_ = Eigen::MatrixXd::Identity(4, 4) * 1;
-
-        x_ = Eigen::VectorXd::Zero(4);
-
-        // Inicializar la posición
-        x_(0) = 0.7; // Posición en X
-        x_(2) = 4.0; // Posición en Y
-
-        // Inicializar las velocidades a cero (o a un valor conocido)
-        x_(1) = 0.0; // Velocidad en X
-        x_(3) = 0.0; // Velocidad en Y
-
         m_messageSendCounter = 0;
 
         if(m_delta_time < PERIOD){
@@ -258,18 +230,9 @@ namespace periodics{
         ThisThread::sleep_for(chrono::milliseconds(msek));
     }
 
-    void CImu::predict(const Eigen::Vector2d& acceleration) {
-        x_ = A_ * x_ + B_ * acceleration;
-        P_ = A_ * P_ * A_.transpose() + Q_;
-    }
-
-    void CImu::update(const Eigen::Vector2d& position) {
-        Eigen::Vector2d z = position;
-        Eigen::Vector2d y = z - H_ * x_;
-        Eigen::MatrixXd S = H_ * P_ * H_.transpose() + R_;
-        Eigen::MatrixXd K = P_ * H_.transpose() * S.inverse();
-        x_ = x_ + K * y;
-        P_ = (Eigen::MatrixXd::Identity(4, 4) - K * H_) * P_;
+    double CImu::getYaw()
+    {
+        return yaw;
     }
 
     void CImu::_run() {
@@ -294,75 +257,20 @@ namespace periodics{
 
         comres += bno055_read_euler_r(&s16_euler_r_raw);
         if(comres != BNO055_SUCCESS) return;
-
-        //Inicializacion de variables de aceleración lineal y lectura de los valores brutos
-
-        s16 s16_linear_accel_x_raw = BNO055_INIT_VALUE;
-        s16 s16_linear_accel_y_raw = BNO055_INIT_VALUE;
-
-        comres = bno055_read_linear_accel_x(&s16_linear_accel_x_raw);
-        if(comres != BNO055_SUCCESS) return;
         
-        comres = bno055_read_linear_accel_y(&s16_linear_accel_y_raw);
-        if(comres != BNO055_SUCCESS) return;
+        yaw =  ((double)s16_euler_h_raw/16.0) * M_PI / 180.0;
+        pitch = ((double)s16_euler_p_raw/16.0) * M_PI / 180.0;
+        roll =  ((double)s16_euler_r_raw/16.0) * M_PI / 180.0;
 
-        
-        double accelx = ((double)s16_linear_accel_x_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-        double accely = ((double)s16_linear_accel_y_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
-        accelx = (accelx > -0.1 && accelx < 0.1) ? 0.0 : accelx;
-        accely = (accely > -0.1 && accely < 0.1) ? 0.0 : accely;
-        
-        Eigen::Vector2d acceleration(accelx, accely);
-        Eigen::Vector2d position(x_(0), x_(2));
-
-        if((-0.110 <= accelx && accelx <= 0.110) && (-0.110 <= accely && accely <= 0.110))
-        {
-            m_velocityX = 0;
-            m_velocityY = 0;
-            m_velocityStationaryCounter++;
-        }
-        else {
-            m_velocityX += (accelx * dt);
-            m_velocityY += (accely * dt);
-            m_velocityStationaryCounter = 0;
-        }
-
-        predict(acceleration);
-        update(position);
-
-        double yaw =  ((double)s16_euler_h_raw/16.0) * M_PI / 180.0;
-
-        // Convertir la posición del eje del auto a coordenadas globales
-        double dx_relativo = x_(3); // Posición relativa en x
-        double dy_relativo = x_(1); //Posicion relativa en y.
-
-        double dx = dx_relativo * cos(yaw) - dy_relativo * sin(yaw);
-        double dy = dx_relativo * sin(yaw) + dy_relativo * cos(yaw);
-        
-        // Obtener el valor del contador de RPM
-        double rpmcounter = static_cast<double>(counter.read());
-
-        if (m_messageSendCounter >= 20)
+        if (m_messageSendCounter >= 15)
         {
 
             m_messageSendCounter = 0;
-            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%d;;\r\n",  
+            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;;\r\n",  
             
-                (float)(s16_euler_h_raw/16.0), 
-                (float)(s16_euler_p_raw/16.0), 
-                (float)(s16_euler_r_raw/16.0), 
-
-                accelx,
-                accely,
-                dx,
-                
-                m_velocityX, 
-                m_velocityY, 
-                rpmcounter,
-            
-                x_(1), 
-                x_(3), 
-                brain::g_speed
+                pitch,
+                roll,
+                yaw
             );
             m_serial.write(buffer,strlen(buffer));    
         }

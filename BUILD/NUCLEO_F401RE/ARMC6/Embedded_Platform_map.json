@@ -2,7 +2,7 @@
     {
         "module": "[lib]/c_w.l",
         "size": {
-            ".text": 17172,
+            ".text": 6316,
             ".data": 16,
             ".bss": 348,
             ".text-delta": 0,
@@ -13,7 +13,7 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 3908,
+            ".text": 3426,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -24,9 +24,9 @@
     {
         "module": "[lib]/libcpp_w.l",
         "size": {
-            ".text": 66934,
+            ".text": 168,
             ".data": 0,
-            ".bss": 2961,
+            ".bss": 0,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -35,7 +35,7 @@
     {
         "module": "[lib]/libcppabi_w.l",
         "size": {
-            ".text": 2615,
+            ".text": 44,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -46,7 +46,7 @@
     {
         "module": "[lib]/m_wm.l",
         "size": {
-            ".text": 3562,
+            ".text": 1184,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -123,7 +123,7 @@
     {
         "module": "mbed-os/platform",
         "size": {
-            ".text": 9658,
+            ".text": 9026,
             ".data": 64,
             ".bss": 412,
             ".text-delta": 0,
@@ -145,7 +145,7 @@
     {
         "module": "mbed-os/targets",
         "size": {
-            ".text": 21581,
+            ".text": 21563,
             ".data": 8,
             ".bss": 1028,
             ".text-delta": 0,
@@ -156,9 +156,9 @@
     {
         "module": "source/brain",
         "size": {
-            ".text": 2009,
+            ".text": 1834,
             ".data": 2,
-            ".bss": 66,
+            ".bss": 57,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -167,7 +167,7 @@
     {
         "module": "source/drivers",
         "size": {
-            ".text": 5844,
+            ".text": 5684,
             ".data": 0,
             ".bss": 4,
             ".text-delta": 0,
@@ -178,9 +178,9 @@
     {
         "module": "source/main.o",
         "size": {
-            ".text": 4202,
-            ".data": 40,
-            ".bss": 3414,
+            ".text": 4219,
+            ".data": 48,
+            ".bss": 3089,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -189,10 +189,10 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 98837,
+            ".text": 7254,
             ".data": 0,
-            ".bss": 114,
-            ".text-delta": -96,
+            ".bss": 88,
+            ".text-delta": 82,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -210,10 +210,10 @@
     },
     {
         "summary": {
-            "static_ram": 16509,
+            "static_ram": 13196,
             "static_ram_delta": 0,
-            "total_flash": 255425,
-            "total_flash_delta": -96
+            "total_flash": 79829,
+            "total_flash_delta": 82
         }
     }
 ]

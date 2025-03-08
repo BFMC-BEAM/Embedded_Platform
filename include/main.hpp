@@ -64,3 +64,7 @@
 #include <periodics/ultrasonido.hpp>
 /* Header file for RPM cardan counter */
 #include "drivers/rpmcounter.hpp"
+/* Header file for the Rpm_counter functionality */
+#include <periodics/rpm_counter.hpp>
+/* Header file for the Pos_calculation functionality */
+#include <periodics/pos_calculation.hpp>

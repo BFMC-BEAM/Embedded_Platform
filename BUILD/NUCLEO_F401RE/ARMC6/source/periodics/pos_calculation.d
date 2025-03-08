@@ -1,5 +1,7 @@
-BUILD/NUCLEO_F401RE/ARMC6/source/main.o: source/main.cpp \
-  BUILD/NUCLEO_F401RE/ARMC6/mbed_config.h include/main.hpp \
+BUILD/NUCLEO_F401RE/ARMC6/source/periodics/pos_calculation.o: \
+  source/periodics/pos_calculation.cpp \
+  BUILD/NUCLEO_F401RE/ARMC6/mbed_config.h \
+  include/periodics/pos_calculation.hpp include/utils/task.hpp \
   mbed-os/mbed.h mbed-os/platform/include/platform/mbed_version.h \
   mbed-os/rtos/include/rtos/rtos.h \
   mbed-os/rtos/include/rtos/internal/mbed_rtos_storage.h \
@@ -288,17 +290,8 @@ BUILD/NUCLEO_F401RE/ARMC6/source/main.o: source/main.cpp \
   mbed-os/platform/include/platform/ScopedRamExecutionLock.h \
   mbed-os/platform/include/platform/mbed_stats.h \
   mbed-os/platform/include/platform/Stream.h \
-  mbed-os/platform/include/platform/FileLike.h \
-  include/periodics/alerts.hpp include/utils/task.hpp \
-  include/periodics/blinker.hpp include/periodics/imu.hpp \
+  mbed-os/platform/include/platform/FileLike.h include/periodics/imu.hpp \
   include/drivers/bno055.hpp include/brain/globalsv.hpp \
-  include/periodics/instantconsumption.hpp \
-  include/periodics/totalvoltage.hpp include/brain/klmanager.hpp \
-  include/periodics/ultrasonido.hpp include/drivers/speedingmotor.hpp \
-  include/brain/robotstatemachine.hpp include/drivers/steeringmotor.hpp \
-  include/utils/taskmanager.hpp include/periodics/resourcemonitor.hpp \
-  include/periodics/powermanager.hpp include/brain/batterymanager.hpp \
-  include/drivers/serialmonitor.hpp include/utils/queue.hpp \
-  include/utils/queue.tpp include/drivers/rpmcounter.hpp \
-  include/periodics/rpm_counter.hpp \
-  include/periodics/pos_calculation.hpp
+  include/periodics/rpm_counter.hpp include/brain/robotstatemachine.hpp \
+  include/drivers/speedingmotor.hpp include/drivers/steeringmotor.hpp \
+  include/utils/taskmanager.hpp

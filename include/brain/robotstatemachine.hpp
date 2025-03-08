@@ -51,7 +51,7 @@ namespace brain
      *  The state of robot can change by external signal received from a higher level controller.   
      * 
      */
-    extern int g_speed;
+    // extern int g_speed;
     class CRobotStateMachine: public utils::CTask
     {
         public:
@@ -72,6 +72,8 @@ namespace brain
             void serialCallbackBRAKEcommand(char const * a, char * b);
             /* Serial callback method for vcd */
             void serialCallbackVCDcommand(char const * message, char * response);
+            
+            int getSpeed();
 
         private:
             /* Contains the state machine, which control the lower level drivers (motor and steering) based the current state. */
