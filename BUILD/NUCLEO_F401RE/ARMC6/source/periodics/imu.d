@@ -447,4 +447,5 @@ BUILD/NUCLEO_F401RE/ARMC6/source/periodics/imu.o: \
   include/Eigen/src/Eigenvalues/./RealQZ.h \
   include/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
   include/brain/robotstatemachine.hpp include/drivers/speedingmotor.hpp \
-  include/drivers/steeringmotor.hpp include/utils/taskmanager.hpp
+  include/drivers/steeringmotor.hpp include/utils/taskmanager.hpp \
+  include/drivers/rpmcounter.hpp

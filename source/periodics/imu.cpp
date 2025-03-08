@@ -8,8 +8,8 @@
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this
+ *    list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
 
  * 3. Neither the name of the copyright holder nor the names of its
@@ -32,6 +32,7 @@
 #include <periodics/imu.hpp>
 #include <cmath>  // Para sin(), cos(), M_PI
 #include "brain/robotstatemachine.hpp"
+#include "drivers/rpmcounter.hpp"
 
 #define M_PI 3.1415926535897932
 
@@ -44,6 +45,9 @@
 
 namespace periodics{
     I2C* periodics::CImu::i2c_instance = nullptr;
+
+    // Declarar una instancia de Counter
+    Counter counter(PC_3);
 
     CImu::CImu(
             std::chrono::milliseconds    f_period, 
@@ -335,6 +339,9 @@ namespace periodics{
         double dx = dx_relativo * cos(yaw) - dy_relativo * sin(yaw);
         double dy = dx_relativo * sin(yaw) + dy_relativo * cos(yaw);
         
+        // Obtener el valor del contador de RPM
+        double rpmcounter = static_cast<double>(counter.read());
+
         if (m_messageSendCounter >= 20)
         {
 
@@ -351,7 +358,7 @@ namespace periodics{
                 
                 m_velocityX, 
                 m_velocityY, 
-                dy,
+                rpmcounter,
             
                 x_(1), 
                 x_(3), 

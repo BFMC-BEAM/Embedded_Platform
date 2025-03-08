@@ -454,4 +454,4 @@ BUILD/NUCLEO_F401RE/ARMC6/source/main.o: source/main.cpp \
   include/utils/taskmanager.hpp include/periodics/resourcemonitor.hpp \
   include/periodics/powermanager.hpp include/brain/batterymanager.hpp \
   include/drivers/serialmonitor.hpp include/utils/queue.hpp \
-  include/utils/queue.tpp
+  include/utils/queue.tpp include/drivers/rpmcounter.hpp
