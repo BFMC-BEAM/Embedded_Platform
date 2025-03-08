@@ -50,7 +50,7 @@ namespace periodics
         {
 
             m_messageSendCounter = 0;
-            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;;\r\n",_x,_y);
+            snprintf(buffer, sizeof(buffer), "@pos:%.3f;%.3f;;\r\n",_x,_y);
             m_serial.write(buffer,strlen(buffer));    
         }
         else
