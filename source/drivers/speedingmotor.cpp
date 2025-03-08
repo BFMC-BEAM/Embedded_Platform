@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
 
@@ -30,39 +30,38 @@
 
 #include <drivers/speedingmotor.hpp>
 
-namespace drivers{
+namespace drivers
+{
     /**
      * @brief It initializes the pwm parameters and it sets the speed reference to zero position, and the limits of the car speed.
-     * 
+     *
      * @param f_pwm_pin               pin connected to servo motor
-     * @param f_inf_limit         inferior limit 
+     * @param f_inf_limit         inferior limit
      * @param f_sup_limit         superior limit
-     * 
+     *
      */
     CSpeedingMotor::CSpeedingMotor(
-            PinName f_pwm_pin, 
-            int f_inf_limit, 
-            int f_sup_limit
-        )
-        : m_pwm_pin(f_pwm_pin)
-        , m_inf_limit(f_inf_limit)
-        , m_sup_limit(f_sup_limit)
+        PinName f_pwm_pin,
+        int f_inf_limit,
+        int f_sup_limit)
+        : m_pwm_pin(f_pwm_pin), m_inf_limit(f_inf_limit), m_sup_limit(f_sup_limit)
     {
         // Set the ms_period on the pwm_pin
-        m_pwm_pin.period_ms(ms_period); 
+        m_pwm_pin.period_ms(ms_period);
         // Set position to zero
         m_pwm_pin.pulsewidth_us(zero_default);
+        // Set the modificy of StepValues
+        addStepValue = 0;
     };
 
     /** @brief  CSpeedingMotor class destructor
      */
-    CSpeedingMotor::~CSpeedingMotor()
-    {
+    CSpeedingMotor::~CSpeedingMotor() {
     };
 
-    /** @brief  It modifies the speed reference of the brushless motor, which controls the speed of the wheels. 
+    /** @brief  It modifies the speed reference of the brushless motor, which controls the speed of the wheels.
      *
-     *  @param f_speed      speed in m/s, where the positive value means forward direction and negative value the backward direction. 
+     *  @param f_speed      speed in m/s, where the positive value means forward direction and negative value the backward direction.
      */
     void CSpeedingMotor::setSpeed(int f_speed)
     {
@@ -71,7 +70,7 @@ namespace drivers{
         m_pwm_pin.pulsewidth_us(conversion(f_speed));
     };
 
-    /** @brief  It puts the brushless motor into brake state, 
+    /** @brief  It puts the brushless motor into brake state,
      */
     void CSpeedingMotor::setBrake()
     {
@@ -79,70 +78,92 @@ namespace drivers{
     };
 
     /**
-    * @brief Interpolates values based on speed input.
-    *
-    * This function interpolates `stepValues` based on the provided `speed` input.
-    * The interpolation is made using `steeringValueP` and `steeringValueN` as reference values.
-    *
-    * @param speed The input speed value for which the values need to be interpolated.
-    * @param speedValuesP Positive reference values for speed.
-    * @param speedValuesN Negative reference values for speed.
-    * @param stepValues Step values corresponding to speedValueP and speedValueN which need to be interpolated.
-    * @param size The size of the arrays.
-    * @return The new value for the step value
-    */
+     * @brief Interpolates values based on speed input.
+     *
+     * This function interpolates `stepValues` based on the provided `speed` input.
+     * The interpolation is made using `steeringValueP` and `steeringValueN` as reference values.
+     *
+     * @param speed The input speed value for which the values need to be interpolated.
+     * @param speedValuesP Positive reference values for speed.
+     * @param speedValuesN Negative reference values for speed.
+     * @param stepValues Step values corresponding to speedValueP and speedValueN which need to be interpolated.
+     * @param size The size of the arrays.
+     * @param addStepValue Value to add of Step Values
+     * @return The new value for the step value
+     */
     int16_t CSpeedingMotor::interpolate(int speed, const int speedValuesP[], const int speedValuesN[], const int stepValues[], int size)
     {
-        if(speed <= speedValuesP[0]){
+        if (speed <= speedValuesP[0])
+        {
             if (speed >= speedValuesN[0])
             {
-                return stepValues[0];
+                return stepValues[0] + this.addStepValue;
             }
-            else{
-                for(uint8_t i=1; i<size; i++)
+            else
+            {
+                for (uint8_t i = 1; i < size; i++)
                 {
                     if (speed >= speedValuesN[i])
                     {
-                        int slope = (stepValues[i] - stepValues[i-1]) / (speedValuesN[i] - speedValuesN[i-1]);
-                        return stepValues[i-1] + slope * (speed - speedValuesN[i-1]);
+                        int slope = (stepValues[i] - stepValues[i - 1]) / (speedValuesN[i] - speedValuesN[i - 1]);
+                        return stepValues[i - 1] + this.addStepValue + slope * (speed - speedValuesN[i - 1]);
                     }
                 }
             }
-            
-        } 
-        if(speed >= speedValuesP[size-1]) return stepValues[size-1];
-        if(speed <= speedValuesN[size-1]) return stepValues[size-1];
+        }
+        if (speed >= speedValuesP[size - 1])
+            return stepValues[size - 1] + this.addStepValue;
+        if (speed <= speedValuesN[size - 1])
+            return stepValues[size - 1] + this.addStepValue;
 
-        for(uint8_t i=1; i<size; i++)
+        for (uint8_t i = 1; i < size; i++)
         {
             if (speed <= speedValuesP[i])
             {
-                int slope = (stepValues[i] - stepValues[i-1]) / (speedValuesP[i] - speedValuesP[i-1]);
-                return stepValues[i-1] + slope * (speed - speedValuesP[i-1]);
+                int slope = (stepValues[i] - stepValues[i - 1]) / (speedValuesP[i] - speedValuesP[i - 1]);
+                return stepValues[i - 1] + this.addStepValue + slope * (speed - speedValuesP[i - 1]);
             }
         }
 
         return -1;
     }
 
-    /** @brief  It converts speed reference to duty cycle for pwm signal. 
-     * 
+    /** @brief  It converts speed reference to duty cycle for pwm signal.
+     *
      *  @param f_speed    speed
      *  \return         pwm value
      */
     int CSpeedingMotor::conversion(int f_speed)
-    {   
-        return ((step_value * f_speed)/100 + zero_default);
+    {
+        return ((step_value * f_speed) / 100 + zero_default);
     };
 
     /**
      * @brief It verifies whether a number is in the given treshold
-     * 
-     * @param f_speed value 
+     *
+     * @param f_speed value
      * @return true means, that the value is in the range
      * @return false means, that the value isn't in the range
      */
-    bool CSpeedingMotor::inRange(int f_speed){
-        return (m_inf_limit<=f_speed) && (f_speed<=m_sup_limit);
+    bool CSpeedingMotor::inRange(int f_speed)
+    {
+        return (m_inf_limit <= f_speed) && (f_speed <= m_sup_limit);
     };
+
+    void CSpeedingMotor::serialCallbackChangeStepValue(char const *a, char *b)
+    {
+        uint16_t valueOfChange = 0;
+        uint8_t l_res = sscanf(a, "%hd", &valueOfChange);
+
+        if (1 == l_res)
+        {
+            this->addStepValue = valueOfChange;
+            sprintf(b, "Good");
+        }
+        else
+        {
+            sprintf(b, "syntax error");
+        }
+    }
+
 }; // namespace hardware::drivers
