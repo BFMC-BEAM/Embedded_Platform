@@ -69,6 +69,7 @@ namespace periodics
         private:
             virtual void I2C_routine(void);
             virtual void    _run();
+            void send_msg(float yaw, float pitch, float rol, float accelx, float accely, float accelz, float velx, float vely, float velz, float posx, float posy, float posz);
             struct bno055_t bno055;
             static I2C* i2c_instance;
             bool            m_isActive;

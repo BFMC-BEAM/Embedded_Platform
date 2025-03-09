@@ -51,22 +51,23 @@ namespace periodics{
         : utils::CTask(f_period),
         m_isActive(false),
         m_serial(f_serial),
-        dt(0.01)
+        dt(0.01)                    // Intervalo de tiempo para cálculos
     {
         
-        A_ << 1, dt, 0, 0,
+        A_ << 1, dt, 0, 0,          // Matriz de transición de estado para el filtro de Kalman
               0, 1, 0, 0,
               0, 0, 1, dt,
               0, 0, 0, 1;
-
-        B_ << 0.5 * dt * dt, 0,
+        
+        B_ << 0.5 * dt * dt, 0,     // Matriz de control
               dt, 0,
               0, 0.5 * dt * dt,
               0, dt;
-
-        H_ << 1, 0, 0, 0,
+        
+        H_ << 1, 0, 0, 0,           // Matriz de observación
               0, 0, 1, 0;
 
+        // Inicialización de las matrices de covarianza
         Q_ = Eigen::MatrixXd::Identity(4, 4) * 0.01;
         R_ = Eigen::MatrixXd::Identity(2, 2) * 0.1;
         P_ = Eigen::MatrixXd::Identity(4, 4) * 1;
@@ -74,15 +75,16 @@ namespace periodics{
         x_ = Eigen::VectorXd::Zero(4);
 
         // Inicializar la posición
-        x_(0) = 0.7; // Posición en X
-        x_(2) = 4.0; // Posición en Y
+        x_(0) = 0.0;    //0.7; // Posición en X
+        x_(2) = 0.0;    //4.0; // Posición en Y
 
         // Inicializar las velocidades a cero (o a un valor conocido)
         x_(1) = 0.0; // Velocidad en X
         x_(3) = 0.0; // Velocidad en Y
 
-        m_messageSendCounter = 0;
-        //Se configura el período de ejecución del hilo
+        m_messageSendCounter = 0;   // Contador de mensajes enviados
+
+        // Configuración del período de muestreo
         if(m_delta_time < PERIOD){
             setNewPeriod(PERIOD);
             m_delta_time = PERIOD;
@@ -95,26 +97,19 @@ namespace periodics{
 
         printf("Starting IMU sensor data acquisition...\r\n");  
         i2c_instance = new I2C(SDA, SCL);
-        i2c_instance->frequency(400000);    //frec maxima de i2c para el imu
+        i2c_instance->frequency(400000);    //frec máxima de i2c para el imu
 
-        ThisThread::sleep_for(chrono::milliseconds(300));
-
+        ThisThread::sleep_for(chrono::milliseconds(300));   // Pequeña pausa
         I2C_routine();
 
         comres = bno055_init(&bno055);
-
         power_mode = BNO055_POWER_MODE_NORMAL;
-
         comres += bno055_set_power_mode(power_mode);
-
         comres += bno055_set_operation_mode(BNO055_OPERATION_MODE_NDOF);
-
         comres += bno055_set_accel_range(BNO055_ACCEL_RANGE_2G);
 
         u8 euler_unit_u8 = BNO055_INIT_VALUE;
-
         comres = bno055_get_euler_unit(&euler_unit_u8);
-
         if (euler_unit_u8 != BNO055_EULER_UNIT_DEG)
             comres += bno055_set_euler_unit(BNO055_EULER_UNIT_DEG);
 
@@ -122,9 +117,9 @@ namespace periodics{
 
     CImu::~CImu()
     {
-        /*-----------------------------------------------------------------------*
+        /*----------------------------------------------------------------------
         ************************* START DE-INITIALIZATION **********************
-        *-------------------------------------------------------------------------*/
+        *---------------------------------------------------------------------*/
         s32 comres = BNO055_ERROR;
         /* variable used to set the power mode of the sensor*/
         u8 power_mode = BNO055_INIT_VALUE;
@@ -148,9 +143,8 @@ namespace periodics{
         ************************* END DE-INITIALIZATION **********************
         *---------------------------------------------------------------------*/
     };
-    /*
-    *Esta función procesa comandos recibidos a través de la comunicación *serial para activar o desactivar el IMU.
-    */
+
+    // Manejo de comandos seriales para activar/desactivar el IMU
     void CImu::serialCallbackIMUcommand(char const * a, char * b) {
         uint8_t l_isActivate=0;
         uint8_t l_res = sscanf(a,"%hhu",&l_isActivate);
@@ -173,7 +167,6 @@ namespace periodics{
     //comunicación I2C con el sensor IMU para escribir
     s8 CImu::BNO055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt)
     {
-        s32 BNO055_iERROR = BNO055_INIT_VALUE;
         u8 array[I2C_BUFFER_LEN];
         u8 stringpos = BNO055_INIT_VALUE;
 
@@ -238,7 +231,7 @@ namespace periodics{
         /* Run method behaviour */
         if(!m_isActive) return;
         
-        char buffer[_100_chars];
+        
         s8 comres = BNO055_SUCCESS;
 
         // auto start = std::chrono::system_clock::now();
@@ -264,7 +257,7 @@ namespace periodics{
         comres = bno055_read_linear_accel_z(&s16_linear_accel_z_raw);
         if(comres != BNO055_SUCCESS) return;
         
-        /*converite detos que estan en raw mm/s² y se converten a m/s²*/
+        /*converite datos que estan en raw mm/s² y se converten a m/s²*/
         double accelx = ((double)s16_linear_accel_x_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         double accely = ((double)s16_linear_accel_y_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         double accelz = ((double)s16_linear_accel_z_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
@@ -275,35 +268,43 @@ namespace periodics{
         predict(acceleration);
         update(position);
         
+        send_msg(
+            (float)(s16_euler_h_raw/BNO055_EULER_DIV_DEG_int), 
+            (float)(s16_euler_p_raw/BNO055_EULER_DIV_DEG_int), 
+            (float)(s16_euler_r_raw/BNO055_EULER_DIV_DEG_int), 
+            accelx, 
+            accely, 
+            0.0, 
+            x_(0), 
+            x_(2), 
+            0.0, 
+            x_(1), 
+            x_(3),
+            0.0);
+
+        
+    }
+    void CImu::send_msg(float yaw, float pitch, float rol, float accelx, float accely, float accelz, float velx, float vely, float velz, float posx, float posy, float posz) {
+        char buffer[_100_chars];
+
         if (m_messageSendCounter >= 10)
         {
             m_messageSendCounter = 0;
-            snprintf(buffer, sizeof(buffer), "@imu:%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;%.3f;;\r\n",  
+            snprintf(buffer, sizeof(buffer), "@imu:%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;%02.3f;;\r\n",  
             
-                (float)(s16_euler_h_raw/BNO055_EULER_DIV_DEG_int), 
-                (float)(s16_euler_p_raw/BNO055_EULER_DIV_DEG_int), 
-                (float)(s16_euler_r_raw/BNO055_EULER_DIV_DEG_int), 
+                yaw, pitch, rol, 
 
-                accelx,
-                accely,
-                0.0,
-                
-                x_(0), 
-                x_(2), 
-                0.0,
+                accelx, accely, accelz,
 
-                x_(1), 
-                x_(3), 
-                0.0
+                velx, vely, velz,
+
+                posx, posy, posz
             );
             m_serial.write(buffer,strlen(buffer));    
         }
         else
-        {
             m_messageSendCounter++;
-        }
-        
-    }
 
+    }
 
 }; // namespace periodics
