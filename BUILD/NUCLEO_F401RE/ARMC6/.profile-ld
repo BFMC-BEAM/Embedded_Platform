@@ -44,10 +44,14 @@
         "DEVICE_USTICKER=1",
         "DEVICE_WATCHDOG=1",
 <<<<<<< HEAD
+<<<<<<< HEAD
         "MBED_BUILD_TIMESTAMP=1741436500.3296852",
 =======
         "MBED_BUILD_TIMESTAMP=1741481038.0931964",
 >>>>>>> fix-imu
+=======
+        "MBED_BUILD_TIMESTAMP=1741546665.7032223",
+>>>>>>> ccbbf357add32887baef0224cf4b9bb90b278df7
         "STM32F401xE",
         "TARGET_CORTEX",
         "TARGET_CORTEX_M",

@@ -178,7 +178,7 @@
     {
         "module": "source/main.o",
         "size": {
-            ".text": 4219,
+            ".text": 4823,
             ".data": 48,
             ".bss": 3089,
             ".text-delta": 0,
@@ -190,6 +190,7 @@
         "module": "source/periodics",
         "size": {
 <<<<<<< HEAD
+<<<<<<< HEAD
             ".text": 7254,
             ".data": 0,
             ".bss": 88,
@@ -200,6 +201,12 @@
             ".bss": 30,
             ".text-delta": 0,
 >>>>>>> fix-imu
+=======
+            ".text": 7494,
+            ".data": 0,
+            ".bss": 88,
+            ".text-delta": -28,
+>>>>>>> ccbbf357add32887baef0224cf4b9bb90b278df7
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -220,12 +227,17 @@
             "static_ram": 13196,
             "static_ram_delta": 0,
 <<<<<<< HEAD
+<<<<<<< HEAD
             "total_flash": 79829,
             "total_flash_delta": 82
 =======
             "total_flash": 252387,
             "total_flash_delta": 0
 >>>>>>> fix-imu
+=======
+            "total_flash": 80673,
+            "total_flash_delta": -28
+>>>>>>> ccbbf357add32887baef0224cf4b9bb90b278df7
         }
     }
 ]

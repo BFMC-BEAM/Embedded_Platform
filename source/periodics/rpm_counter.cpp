@@ -1,7 +1,7 @@
 #include "periodics/rpm_counter.hpp"
 
 #define M_PI 3.1415926535897932
-#define RADIOUS 0.05
+#define RADIOUS 0.005
 
 // TODO: Add your code here
 namespace periodics
@@ -20,7 +20,7 @@ namespace periodics
           , _rpm(0)
      {
           _timer.start(); // Inicializa el temporizador
-          rpmCounterPin.rise(callback(this, &CRpm_counter::increment));
+          rpmCounterPin.fall(callback(this, &CRpm_counter::increment));
      }
 
      /** @brief  CRpm_counter class destructor
@@ -29,15 +29,32 @@ namespace periodics
      {
      }
 
+    void CRpm_counter::serialCallbackRPMcommand(char const * a, char * b) {
+        uint8_t l_isActivate = 0;
+        uint8_t l_res = sscanf(a, "%hhu", &l_isActivate);
+
+        if (1 == l_res) {
+            m_isActive = (l_isActivate >= 1);
+            sprintf(b, "1");
+        } else {
+            sprintf(b, "syntax error");
+        }
+    }
+
     void CRpm_counter::increment() {
         // Get the elapsed time in milliseconds since the timer was started or last reset
         auto elapsed = _timer.elapsed_time().count();
-    
-        if (elapsed > 5) { // Evita contar pulsos si han pasado menos de 5 ms | Debounce
-             _count++;
-             _timer.reset();
-             _timer.start(); // Restart the timer after reset
-        }
+        
+        // printf("Elapsed time: %d\n", elapsed);
+        
+        // Calculate RPM based on the elapsed time
+        if( elapsed >= 1000) _rpm = 0;
+        else _rpm = (60000.0 / elapsed);
+
+        _count++;
+
+        _timer.reset();
+        _timer.start(); // Restart the timer after reset
     }
     
     double CRpm_counter::read() {
@@ -56,20 +73,9 @@ namespace periodics
     void CRpm_counter::_run()
     {
         /* Run method behaviour */
-        if(!m_isActive) return;
+        // if(!m_isActive) return;
 
-        // Get the elapsed time in milliseconds since the timer was started or last reset
-        auto elapsed_ms = _timer.elapsed_time().count();
-
-        if (elapsed_ms > 0) { 
-             // Cálculo de RPM
-             _rpm = (_count * 60000) / elapsed_ms;
-
-             // Reiniciar contador y actualizar tiempo de referencia
-             _count = 0;
-             _timer.reset();
-             _timer.start(); // Restart the timer after reset
-        }
+        printf("RPM: %f | Count: %d \n", _rpm, _count);
 
     }
 
