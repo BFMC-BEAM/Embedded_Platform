@@ -30,16 +30,32 @@ namespace periodics
     {
     }
 
+    void CPos_calculation::serialCallbackPOScommand(char const * a, char * b) {
+        uint8_t l_isActivate = 0;
+        uint8_t l_res = sscanf(a, "%hhu", &l_isActivate);
+
+        if (1 == l_res) {
+            if (uint8_globalsV_value_of_kl == 15 || uint8_globalsV_value_of_kl == 30) {
+                m_isActive = (l_isActivate >= 1);
+                bool_globalsV_ultra_isActive = (l_isActivate >= 1);
+                sprintf(b, "1");
+            } else {
+                sprintf(b, "kl 15/30 is required!!");
+            }
+        } else {
+            sprintf(b, "syntax error");
+        }
+    }
+
     /* Run method */
     void CPos_calculation::_run()
     {
         /* Run method behaviour */
-        if(!m_isActive) return;
+        // if(!m_isActive) return;
 
         char buffer[_100_chars];      
         float yaw = m_imu.getYaw();
         int velocity = m_rpm_counter.getVelocity();
-
 
         // Cálculo de la posición
 

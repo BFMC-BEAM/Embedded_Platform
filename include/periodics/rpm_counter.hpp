@@ -25,6 +25,9 @@ namespace periodics
             ~CRpm_counter();
             double getRpm();
             double getVelocity();
+
+            void serialCallbackRPMcommand(char const * a, char * b);
+
         private:
             /* private variables & method member */
 

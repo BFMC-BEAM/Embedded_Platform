@@ -28,6 +28,9 @@ namespace periodics
             );
             /* Destructor */
             ~CPos_calculation();
+
+            void serialCallbackPOScommand(char const * a, char * b);
+
         private:
             UnbufferedSerial&      m_serial;
             CImu& m_imu;                 

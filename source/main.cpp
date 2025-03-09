@@ -66,14 +66,15 @@ periodics::CResourcemonitor g_resourceMonitor(g_baseTick * 5000, g_rpi);
 
 /* USER NEW COMPONENT BEGIN */
 mbed::DigitalOut trigPin(D8);
+
 mbed::InterruptIn echoPinFront(D9);
 mbed::InterruptIn echoPinBack(D7);
 mbed::InterruptIn echoPinLeft(D6);
 mbed::InterruptIn echoPinRight(D5);
 periodics::CUltrasonido g_ultrasonido(g_baseTick*150, g_rpi, g_speedingDriver, trigPin, echoPinFront, echoPinBack, echoPinLeft, echoPinRight);
 
-mbed::InterruptIn rpmCounterPin(PC_3);
-periodics::CRpm_counter g_rpm_counter(g_baseTick * 1000, rpmCounterPin);
+mbed::InterruptIn rpmCounterPin(D10);
+periodics::CRpm_counter g_rpm_counter(g_baseTick * 10, rpmCounterPin);
 
 periodics::CPos_calculation g_pos_calculation(g_baseTick * 10, g_rpi, g_imu, g_rpm_counter);
 
@@ -94,10 +95,13 @@ drivers::CSerialMonitor::CSerialSubscriberMap g_serialMonitorSubscribers = {
     {"battery",        mbed::callback(&g_totalvoltage,      &periodics::CTotalVoltage::serialCallbackTOTALVcommand)},
     {"instant",        mbed::callback(&g_instantconsumption,&periodics::CInstantConsumption::serialCallbackINSTANTcommand)},
     {"imu",            mbed::callback(&g_imu,               &periodics::CImu::serialCallbackIMUcommand)},
-    {"ultra",          mbed::callback(&g_ultrasonido,       &periodics::CUltrasonido::serialCallbackULTRAcommand)},
     {"kl",             mbed::callback(&g_klmanager,         &brain::CKlmanager::serialCallbackKLCommand)},
     {"batteryCapacity",mbed::callback(&g_batteryManager,    &brain::CBatterymanager::serialCallbackBATTERYCommand)},
-    {"resourceMonitor",mbed::callback(&g_resourceMonitor,   &periodics::CResourcemonitor::serialCallbackRESMONCommand),}
+    {"resourceMonitor",mbed::callback(&g_resourceMonitor,   &periodics::CResourcemonitor::serialCallbackRESMONCommand)},
+    // USER NEW SERIAL CALLBACK BEGIN -
+    {"ultra",          mbed::callback(&g_ultrasonido,       &periodics::CUltrasonido::serialCallbackULTRAcommand)},
+    {"rpm",            mbed::callback(&g_rpm_counter,       &periodics::CRpm_counter::serialCallbackRPMcommand)},
+    {"pos",            mbed::callback(&g_pos_calculation,   &periodics::CPos_calculation::serialCallbackPOScommand)}
 };
 
 // Create the serial monitor object, which decodes, redirects the messages and transmits the responses.
