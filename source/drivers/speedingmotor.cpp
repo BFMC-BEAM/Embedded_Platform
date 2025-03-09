@@ -97,7 +97,7 @@ namespace drivers
         {
             if (speed >= speedValuesN[0])
             {
-                return stepValues[0] + this.addStepValue;
+                return stepValues[0] + this->addStepValue;
             }
             else
             {
@@ -106,22 +106,22 @@ namespace drivers
                     if (speed >= speedValuesN[i])
                     {
                         int slope = (stepValues[i] - stepValues[i - 1]) / (speedValuesN[i] - speedValuesN[i - 1]);
-                        return stepValues[i - 1] + this.addStepValue + slope * (speed - speedValuesN[i - 1]);
+                        return stepValues[i - 1] + this->addStepValue + slope * (speed - speedValuesN[i - 1]);
                     }
                 }
             }
         }
         if (speed >= speedValuesP[size - 1])
-            return stepValues[size - 1] + this.addStepValue;
+            return stepValues[size - 1] + this->addStepValue;
         if (speed <= speedValuesN[size - 1])
-            return stepValues[size - 1] + this.addStepValue;
+            return stepValues[size - 1] + this->addStepValue;
 
         for (uint8_t i = 1; i < size; i++)
         {
             if (speed <= speedValuesP[i])
             {
                 int slope = (stepValues[i] - stepValues[i - 1]) / (speedValuesP[i] - speedValuesP[i - 1]);
-                return stepValues[i - 1] + this.addStepValue + slope * (speed - speedValuesP[i - 1]);
+                return stepValues[i - 1] + this->addStepValue + slope * (speed - speedValuesP[i - 1]);
             }
         }
 
