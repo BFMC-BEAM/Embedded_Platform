@@ -43,8 +43,6 @@
 namespace periodics{
     I2C* periodics::CImu::i2c_instance = nullptr;
 
-    // Declarar una instancia de Counter
-    Counter counter(PC_3);
 
     CImu::CImu(
             std::chrono::milliseconds    f_period, 
@@ -284,7 +282,7 @@ namespace periodics{
             x_(1), 
             x_(3),
             0.0);
-
+        yaw = (s16_euler_h_raw/BNO055_EULER_DIV_DEG_int);
         
     }
     void CImu::send_msg(float yaw, float pitch, float rol, float accelx, float accely, float accelz, float velx, float vely, float velz, float posx, float posy, float posz) {
@@ -304,10 +302,13 @@ namespace periodics{
                 posx, posy, posz
             );
             m_serial.write(buffer,strlen(buffer));    
+            
         }
         else
             m_messageSendCounter++;
 
     }
-
+    double CImu::getYaw(){
+        return yaw;
+    }
 }; // namespace periodics

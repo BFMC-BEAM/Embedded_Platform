@@ -41,6 +41,7 @@
 #include <utils/task.hpp>
 #include <brain/globalsv.hpp>
 #include <chrono>
+#include <Eigen/Dense>
 
 namespace periodics
 {
@@ -65,8 +66,7 @@ namespace periodics
             static s8 BNO055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
             static void BNO055_delay_msek(u32 msek);
             void serialCallbackIMUcommand(char const * a, char * b);
-            void serialCallbackSPEEDcommand(char const * a, char * b);
-            double getYaw(); // Método para obtener el valor de yaw
+            double getYaw();
         private:
             virtual void I2C_routine(void);
             virtual void    _run();
@@ -80,11 +80,21 @@ namespace periodics
             /* Variable contador para limitar la velocidad de envío del mensaje */
             int m_messageSendCounter;
 
-            double yaw;
-            double pitch;
-            double roll;
+
+            void predict(const Eigen::Vector2d& acceleration);
+            void update(const Eigen::Vector2d& position);
 
             double dt;
+
+            Eigen::Matrix<double, 4, 4> A_;
+            Eigen::Matrix<double, 4, 2> B_;
+            Eigen::Matrix<double, 2, 4> H_;
+            Eigen::Matrix<double, 4, 4> Q_;
+            Eigen::Matrix<double, 2, 2> R_;
+            Eigen::Matrix<double, 4, 4> P_;
+            Eigen::Matrix<double, 4, 1> x_;
+            
+            double yaw;
 
     }; // class CImu
 

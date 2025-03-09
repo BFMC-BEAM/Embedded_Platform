@@ -34,8 +34,8 @@ namespace periodics
             mbed::InterruptIn& rpmCounterPin;
             // std::chrono::steady_clock::time_point _lastTime;
             mbed::Timer _timer;
-            double _count = 0;            
-            double _rpm = 0;
+            int _count;            
+            double _rpm;
 
             void increment();
             double read();

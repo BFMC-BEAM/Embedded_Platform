@@ -2,7 +2,7 @@
     {
         "module": "[lib]/c_w.l",
         "size": {
-            ".text": 6316,
+            ".text": 17172,
             ".data": 16,
             ".bss": 348,
             ".text-delta": 0,
@@ -13,7 +13,7 @@
     {
         "module": "[lib]/fz_wm.l",
         "size": {
-            ".text": 3426,
+            ".text": 3824,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -24,9 +24,9 @@
     {
         "module": "[lib]/libcpp_w.l",
         "size": {
-            ".text": 168,
+            ".text": 66934,
             ".data": 0,
-            ".bss": 0,
+            ".bss": 2961,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -35,7 +35,7 @@
     {
         "module": "[lib]/libcppabi_w.l",
         "size": {
-            ".text": 44,
+            ".text": 2615,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -46,7 +46,7 @@
     {
         "module": "[lib]/m_wm.l",
         "size": {
-            ".text": 1184,
+            ".text": 1930,
             ".data": 0,
             ".bss": 0,
             ".text-delta": 0,
@@ -123,7 +123,7 @@
     {
         "module": "mbed-os/platform",
         "size": {
-            ".text": 9026,
+            ".text": 9648,
             ".data": 64,
             ".bss": 412,
             ".text-delta": 0,
@@ -156,9 +156,9 @@
     {
         "module": "source/brain",
         "size": {
-            ".text": 1834,
+            ".text": 1991,
             ".data": 2,
-            ".bss": 57,
+            ".bss": 62,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -178,9 +178,9 @@
     {
         "module": "source/main.o",
         "size": {
-            ".text": 4823,
+            ".text": 4926,
             ".data": 48,
-            ".bss": 3089,
+            ".bss": 3662,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -189,24 +189,10 @@
     {
         "module": "source/periodics",
         "size": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            ".text": 7254,
+            ".text": 100196,
             ".data": 0,
-            ".bss": 88,
-            ".text-delta": 82,
-=======
-            ".text": 98905,
-            ".data": 0,
-            ".bss": 30,
+            ".bss": 35,
             ".text-delta": 0,
->>>>>>> fix-imu
-=======
-            ".text": 7494,
-            ".data": 0,
-            ".bss": 88,
-            ".text-delta": -28,
->>>>>>> ccbbf357add32887baef0224cf4b9bb90b278df7
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -224,20 +210,10 @@
     },
     {
         "summary": {
-            "static_ram": 13196,
+            "static_ram": 16682,
             "static_ram_delta": 0,
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "total_flash": 79829,
-            "total_flash_delta": 82
-=======
-            "total_flash": 252387,
+            "total_flash": 255594,
             "total_flash_delta": 0
->>>>>>> fix-imu
-=======
-            "total_flash": 80673,
-            "total_flash_delta": -28
->>>>>>> ccbbf357add32887baef0224cf4b9bb90b278df7
         }
     }
 ]
