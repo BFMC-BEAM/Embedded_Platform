@@ -1,4 +1,6 @@
 #include "periodics/pos_calculation.hpp"
+#include "periodics/imu.hpp"
+#include "periodics/rpm_counter.hpp"
 
 #define _100_chars                      100
 

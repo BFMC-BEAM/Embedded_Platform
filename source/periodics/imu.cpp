@@ -30,10 +30,9 @@
 
 
 #include <periodics/imu.hpp>
-#include <cmath>  // Para sin(), cos(), M_PI
+#include <cmath>
 #include <array>
-#include <periodics/rpm_counter.hpp>
-//#include <rpm_counter.cpp>
+
 #ifndef M_PI
     #define M_PI 3.1415926535897932
 #endif
@@ -41,7 +40,7 @@
 #define _100_chars                      100     // tamaño del buffer
 #define BNO055_EULER_DIV_DEG_int        16.0    // division para envio de variables por monitor serial
 #define BNO055_LINEAR_ACCEL_DIV_MSQ_int 100     // variable para conversion de datos
-#define PERIOD 10 // old:MAX_NOISE
+#define PERIOD 10
 
 namespace periodics{
     I2C* periodics::CImu::i2c_instance = nullptr;
@@ -79,12 +78,12 @@ namespace periodics{
         x_ = Eigen::VectorXd::Zero(4);
 
         // Inicializar la posición
-        x_(0) = 0.0;    //0.7; // Posición en X
-        x_(2) = 0.0;    //4.0; // Posición en Y
+        x_(mat_x_position_x) = 0.0;    //0.7; // Posición en X
+        x_(mat_x_position_y) = 0.0;    //4.0; // Posición en Y
 
         // Inicializar las velocidades a cero (o a un valor conocido)
-        x_(1) = 0.0; // Velocidad en X
-        x_(3) = 0.0; // Velocidad en Y
+        x_(mat_x_velocity_x) = 0.0; // Velocidad en X
+        x_(mat_x_velocity_y) = 0.0; // Velocidad en Y
 
         m_messageSendCounter = 0;   // Contador de mensajes enviados
 
@@ -232,7 +231,6 @@ namespace periodics{
     *Esta función es el núcleo del hilo que se ejecuta periódicamente. Lee los *datos del IMU, aplica el filtro de Kalman y envía los resultados a través *de la comunicación serial.
     */
     void CImu::_run() {
-        int EncoderVel = 0;
         /* Run method behaviour */
         if(!m_isActive) return;
         
@@ -268,34 +266,45 @@ namespace periodics{
         double accelz = ((double)s16_linear_accel_z_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         
         Eigen::Vector2d acceleration(accelx, accely);
-
-        EncoderVel = CRpm_counter::getVelocity();
-        if(EncoderVel!=0)
-            std::array<int, 2> correctedVel = fixVelocity(EncoderVel, x_(0), x_(2));
-        x_(0)=correctedVel[0];
-        x_(1)=correctedVel[1];
-        Eigen::Vector2d position(x_(0), x_(2));
+        Eigen::Vector2d position(x_(mat_x_position_x), x_(mat_x_position_y));
 
         predict(acceleration);
         update(position);
-        
-        send_msg(
+        updateImuData(
             (float)(s16_euler_h_raw/BNO055_EULER_DIV_DEG_int), 
             (float)(s16_euler_p_raw/BNO055_EULER_DIV_DEG_int), 
             (float)(s16_euler_r_raw/BNO055_EULER_DIV_DEG_int), 
             accelx, 
             accely, 
-            0.0, 
-            x_(0), 
-            x_(2), 
-            0.0, 
-            x_(1), 
-            x_(3),
+            0.0,  
+            x_(mat_x_velocity_x), 
+            x_(mat_x_velocity_y),
+            0.0,
+            x_(mat_x_position_x), 
+            x_(mat_x_position_y), 
             0.0);
-        yaw = (s16_euler_h_raw/BNO055_EULER_DIV_DEG_int);
+
+        print_imu_data();
         
     }
-    void CImu::send_msg(float yaw, float pitch, float rol, float accelx, float accely, float accelz, float velx, float vely, float velz, float posx, float posy, float posz) {
+
+    void CImu::updateImuData(float yawValue, float pitchValue, float rolValue, float accelxValue, float accelyValue, float accelzValue, float velxValue, float velyValue, float velzValue, float posxValue, float posyValue, float poszValue)
+    {
+        yaw = yawValue;
+        pitch = pitchValue;
+        rol = rolValue;
+        accelx = accelxValue;
+        accely = accelyValue;
+        accelz = accelzValue;
+        velx = velxValue;
+        vely = velyValue;
+        velz = velzValue;
+        posx = posxValue;
+        posy = posyValue;
+        posz = poszValue;
+    }
+
+    void CImu::print_imu_data(void) {
         char buffer[_100_chars];
 
         if (m_messageSendCounter >= 10)
@@ -318,25 +327,44 @@ namespace periodics{
             m_messageSendCounter++;
 
     }
-    double CImu::getYaw(){
+    float CImu::getYaw(void)
+    {
         return yaw;
     }
-
-    std::array<int, 2>  CImu::fixVelocity(int EncoderVel, int ImuVelX, int ImuVelY)
+    float CImu::getPitch(void)
     {
-        std::array<int, 2> Vel = {0, 0};
-
-        if (ImuVelX == 0 && ImuVelY == 0)
-            return Vel;
-
-        float magnitudeImu = sqrt(ImuVelX * ImuVelX + ImuVelY * ImuVelY);
-        float normX = ImuVelX / magnitudeImu;
-        float normY = ImuVelY / magnitudeImu;
-
-        Vel[0] = static_cast<int>(normX * EncoderVel);
-        Vel[1] = static_cast<int>(normY * EncoderVel);
-
-        return Vel;
+        return pitch;
     }
-
-}; // namespace periodics
+    float CImu::getRol(void)
+    {
+        return rol;
+    }
+    float CImu::getAceleration_X(void)
+    {
+        return accelx;
+    }
+    float CImu::getAceleration_Y(void)
+    {
+        return accely;
+    }
+    float CImu::getAceleration_Z(void)
+    {
+        return accelz;
+    }
+    float CImu::getVelocity_X(void)
+    {
+        return velx;
+    }
+    float CImu::getVelocity_Y(void)
+    {
+        return vely;
+    }
+    float CImu::getPosition_X(void)
+    {
+        return posx;
+    }
+    float CImu::getPosition_Y(void)
+    {
+        return posy;
+    }
+};

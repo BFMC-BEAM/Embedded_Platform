@@ -1,10 +1,15 @@
 #include "periodics/rpm_counter.hpp"
+#include <cmath>
+#ifndef M_PI
+    #define M_PI 3.1415926535897932
+#endif
 
-#define M_PI 3.1415926535897932
 #define RADIOUS 0.005
 #define MIN_DELTA_TIME_MS 100   //si el encoder itera 1 vez cada 10cm -> delta minimo a 60cm/seg = 167 [ms]
 #define MAX_DELTA_TIME_MS 2100   //si el encoder itera 1 vez cada 10cm -> delta minimo a 5cm/seg = 2000 [ms]
 #define MAX_DELAY_TO_RESET_S 3
+#define DEFAULT_RPM 0
+#define DEFAULT_CMS_VEL 0
 
 namespace periodics
 {
@@ -52,20 +57,19 @@ namespace periodics
     void CRpm_counter::increment() {
         // Get the deltaTimeMs time in milliseconds since the timer was started or last reset
         deltaTimeMs=validDeltaTimeMs(_timer.elapsed_time().count()/1000);
-        // Calculate RPM based on the deltaTimeMs time
         calculateRPM(deltaTimeMs);
-
+        calculateVelocityCMS(_rpm);
         _count++;
 
         _timer.reset();
         _timer.start(); // Restart the timer after reset
     }
     
-    double CRpm_counter::read() {
+    int CRpm_counter::read() {
         return _count;
     }
     
-    double CRpm_counter::getRpm() {
+    int CRpm_counter::getRpm() {
         return _rpm;
     }
 
@@ -77,17 +81,16 @@ namespace periodics
     /* Run method */
     void CRpm_counter::_run()
     {
-        /* Run method behaviour */
         // if(!m_isActive) return;
         TimeToResetMs=validDeltaTimeMs(_timer.elapsed_time().count()/1000000);
         if(TimeToResetMs > MAX_DELAY_TO_RESET_S)
         {
-            _rpm = 0;
+            _rpm = DEFAULT_RPM;
+            velCMS = DEFAULT_CMS_VEL;
             TimeToResetMs = MAX_DELAY_TO_RESET_S;
         }
-        velCMS =(int)((float)_rpm* 1.0472);
 
-        // printf("RPM: %d | CM/S: %d | Count: %d | deltaTimeMs: %d | Time to Reset RPM: %d \n", _rpm, velCMS , _count, deltaTimeMs, TimeToResetMs);
+        printf("RPM: %d | CM/S: %d | Count: %d | deltaTimeMs: %d | Time to Reset RPM: %d \n", _rpm, velCMS , _count, deltaTimeMs, TimeToResetMs);
 
         previousCount=_count;
 
@@ -103,13 +106,19 @@ namespace periodics
         return currentDeltaTimeMs;
     }
 
-    //calcula el rpm en base a la 
+    //calcula el rpm en base al delta de tiempo. Si el delta de tiempo es muy alto 
     void CRpm_counter::calculateRPM(int currentDeltaTimeMs)
     {
         if(currentDeltaTimeMs >= MAX_DELTA_TIME_MS)
-            _rpm = 0;
+            _rpm = DEFAULT_RPM;
         else 
             _rpm = (60000.0 / currentDeltaTimeMs);
+    }
+
+    //convierte la velocidad de RPM a cm/Seg
+    void CRpm_counter::calculateVelocityCMS(int RpmVelocity)
+    {
+        velCMS = (int)((float)RpmVelocity * 1.0472);
     }
     
     

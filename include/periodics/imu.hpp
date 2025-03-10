@@ -66,12 +66,31 @@ namespace periodics
             static s8 BNO055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
             static void BNO055_delay_msek(u32 msek);
             void serialCallbackIMUcommand(char const * a, char * b);
-            double getYaw();
+            float getYaw(void);
+            float getPitch(void);
+            float getRol(void);
+            float getAceleration_X(void);
+            float getAceleration_Y(void);
+            float getAceleration_Z(void);
+            float getVelocity_X(void);
+            float getVelocity_Y(void);
+            //float getVelocity_Z(void);
+            float getPosition_X(void);
+            float getPosition_Y(void);
+            //float getPosition_Z(void);
+
         private:
+
+            enum MatXData {
+                mat_x_position_x,   //0
+                mat_x_velocity_x,   //1
+                mat_x_position_y,   //2
+                mat_x_velocity_y    //3
+            };
+
             virtual void I2C_routine(void);
-            virtual void    _run();
-            std::array<int, 2>  fixVelocity(int EncoderVel, int ImuVelX, int ImuVelY);
-            void send_msg(float yaw, float pitch, float rol, float accelx, float accely, float accelz, float velx, float vely, float velz, float posx, float posy, float posz);
+            virtual void    _run(void);
+            void print_imu_data(void);
             struct bno055_t bno055;
             static I2C* i2c_instance;
             bool            m_isActive;
@@ -84,6 +103,7 @@ namespace periodics
 
             void predict(const Eigen::Vector2d& acceleration);
             void update(const Eigen::Vector2d& position);
+            void updateImuData(float yawValue, float pitchValue, float rolValue, float accelxValue, float accelyValue, float accelzValue, float velxValue, float velyValue, float velzValue, float posxValue, float posyValue, float poszValue);
 
             double dt;
 
@@ -95,7 +115,18 @@ namespace periodics
             Eigen::Matrix<double, 4, 4> P_;
             Eigen::Matrix<double, 4, 1> x_;
             
-            double yaw;
+            float yaw;
+            float pitch;
+            float rol;
+            float accelx;
+            float accely;
+            float accelz;
+            float velx;
+            float vely;
+            float velz;
+            float posx;
+            float posy;
+            float posz;
 
     }; // class CImu
 
