@@ -2,7 +2,7 @@
     {
         "module": "[lib]/c_w.l",
         "size": {
-            ".text": 17172,
+            ".text": 17288,
             ".data": 16,
             ".bss": 348,
             ".text-delta": 0,
@@ -180,7 +180,7 @@
         "size": {
             ".text": 4926,
             ".data": 48,
-            ".bss": 3662,
+            ".bss": 3670,
             ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
@@ -189,10 +189,10 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 100196,
+            ".text": 99463,
             ".data": 0,
             ".bss": 35,
-            ".text-delta": 0,
+            ".text-delta": -126,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -210,10 +210,10 @@
     },
     {
         "summary": {
-            "static_ram": 16682,
+            "static_ram": 16690,
             "static_ram_delta": 0,
-            "total_flash": 255594,
-            "total_flash_delta": 0
+            "total_flash": 254977,
+            "total_flash_delta": -126
         }
     }
 ]

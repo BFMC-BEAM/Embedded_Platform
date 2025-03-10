@@ -24,7 +24,7 @@ namespace periodics
             /* Destructor */
             ~CRpm_counter();
             double getRpm();
-            double getVelocity();
+            int getVelocity();
 
             void serialCallbackRPMcommand(char const * a, char * b);
 
@@ -34,12 +34,18 @@ namespace periodics
             mbed::InterruptIn& rpmCounterPin;
             // std::chrono::steady_clock::time_point _lastTime;
             mbed::Timer _timer;
-            int _count;            
-            double _rpm;
-
+            int _count;
+            int previousCount;   
+            int velCMS;         
+            int _rpm;
+            int TimeToResetMs;
+            int deltaTimeMs; //tiempo transcurrido entre deteccion del encoder 
+            int previousDeltaTimeMs; //diferencia de tiempos entre pulsos del encoder anterior
+            
             void increment();
             double read();
-            
+            int validDeltaTimeMs(int currentDeltaTimeMs);
+            void calculateRPM(int currentDeltaTimeMs);
             /* Run method */
             virtual void        _run();
 

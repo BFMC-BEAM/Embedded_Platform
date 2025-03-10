@@ -8,8 +8,9 @@ public:
     Counter(PinName pin);
     void increment();
     int read();
-
+    
 private:
+    
     InterruptIn _interrupt;
     volatile int _count = 0;
 };

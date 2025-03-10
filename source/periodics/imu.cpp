@@ -31,6 +31,9 @@
 
 #include <periodics/imu.hpp>
 #include <cmath>  // Para sin(), cos(), M_PI
+#include <array>
+#include <periodics/rpm_counter.hpp>
+//#include <rpm_counter.cpp>
 #ifndef M_PI
     #define M_PI 3.1415926535897932
 #endif
@@ -229,6 +232,7 @@ namespace periodics{
     *Esta función es el núcleo del hilo que se ejecuta periódicamente. Lee los *datos del IMU, aplica el filtro de Kalman y envía los resultados a través *de la comunicación serial.
     */
     void CImu::_run() {
+        int EncoderVel = 0;
         /* Run method behaviour */
         if(!m_isActive) return;
         
@@ -264,6 +268,12 @@ namespace periodics{
         double accelz = ((double)s16_linear_accel_z_raw) / BNO055_LINEAR_ACCEL_DIV_MSQ_int;
         
         Eigen::Vector2d acceleration(accelx, accely);
+
+        EncoderVel = CRpm_counter::getVelocity();
+        if(EncoderVel!=0)
+            std::array<int, 2> correctedVel = fixVelocity(EncoderVel, x_(0), x_(2));
+        x_(0)=correctedVel[0];
+        x_(1)=correctedVel[1];
         Eigen::Vector2d position(x_(0), x_(2));
 
         predict(acceleration);
@@ -311,4 +321,22 @@ namespace periodics{
     double CImu::getYaw(){
         return yaw;
     }
+
+    std::array<int, 2>  CImu::fixVelocity(int EncoderVel, int ImuVelX, int ImuVelY)
+    {
+        std::array<int, 2> Vel = {0, 0};
+
+        if (ImuVelX == 0 && ImuVelY == 0)
+            return Vel;
+
+        float magnitudeImu = sqrt(ImuVelX * ImuVelX + ImuVelY * ImuVelY);
+        float normX = ImuVelX / magnitudeImu;
+        float normY = ImuVelY / magnitudeImu;
+
+        Vel[0] = static_cast<int>(normX * EncoderVel);
+        Vel[1] = static_cast<int>(normY * EncoderVel);
+
+        return Vel;
+    }
+
 }; // namespace periodics
