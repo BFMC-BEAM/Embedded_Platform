@@ -7,7 +7,7 @@
 #define RADIOUS 0.005
 #define MIN_DELTA_TIME_MS 100   //si el encoder itera 1 vez cada 10cm -> delta minimo a 60cm/seg = 167 [ms]
 #define MAX_DELTA_TIME_MS 2100   //si el encoder itera 1 vez cada 10cm -> delta minimo a 5cm/seg = 2000 [ms]
-#define MAX_DELAY_TO_RESET_S 3
+#define MAX_DELAY_TO_RESET_MS 3000
 #define DEFAULT_RPM 0
 #define DEFAULT_CMS_VEL 0
 
@@ -82,12 +82,15 @@ namespace periodics
     void CRpm_counter::_run()
     {
         // if(!m_isActive) return;
-        TimeToResetMs=validDeltaTimeMs(_timer.elapsed_time().count()/1000000);
-        if(TimeToResetMs > MAX_DELAY_TO_RESET_S)
-        {
+        
+        TimeToResetMs=validDeltaTimeMs(_timer.elapsed_time().count()/1000);
+        printf("timer base %d | timer reset %d", (int)_timer.elapsed_time().count()/1000000, (int)TimeToResetMs);
+        if(TimeToResetMs > MAX_DELAY_TO_RESET_MS)
+        {   
+            //printf("filtro de rebote esta manqueando");
             _rpm = DEFAULT_RPM;
             velCMS = DEFAULT_CMS_VEL;
-            TimeToResetMs = MAX_DELAY_TO_RESET_S;
+            TimeToResetMs = MAX_DELAY_TO_RESET_MS;
         }
 
         printf("RPM: %d | CM/S: %d | Count: %d | deltaTimeMs: %d | Time to Reset RPM: %d \n", _rpm, velCMS , _count, deltaTimeMs, TimeToResetMs);
@@ -99,9 +102,11 @@ namespace periodics
     //valida que el delta de tiempo sea mayor al minimo posible para filtrar rebotes indeseados del encoder
     int CRpm_counter::validDeltaTimeMs(int currentDeltaTimeMs)
     {
-        //if(currentDeltaTimeMs < MIN_DELTA_TIME_MS)
-            //return previousDeltaTimeMs;
-
+        if(currentDeltaTimeMs < MIN_DELTA_TIME_MS)
+        {
+            return previousDeltaTimeMs;
+        }
+            
         previousDeltaTimeMs = currentDeltaTimeMs;
         return currentDeltaTimeMs;
     }

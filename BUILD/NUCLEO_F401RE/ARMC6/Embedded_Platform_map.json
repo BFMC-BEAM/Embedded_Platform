@@ -189,10 +189,10 @@
     {
         "module": "source/periodics",
         "size": {
-            ".text": 99463,
+            ".text": 99652,
             ".data": 0,
             ".bss": 35,
-            ".text-delta": -126,
+            ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -212,8 +212,8 @@
         "summary": {
             "static_ram": 16690,
             "static_ram_delta": 0,
-            "total_flash": 254977,
-            "total_flash_delta": -126
+            "total_flash": 255166,
+            "total_flash_delta": 0
         }
     }
 ]
