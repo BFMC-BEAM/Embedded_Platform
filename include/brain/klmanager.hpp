@@ -38,6 +38,7 @@
 #include <periodics/alerts.hpp>
 #include <periodics/imu.hpp>
 #include <periodics/ultrasonido.hpp>
+#include <periodics/pos_calculation.hpp>
 #include <periodics/instantconsumption.hpp>
 #include <periodics/totalvoltage.hpp>
 #include <brain/robotstatemachine.hpp>
@@ -58,6 +59,7 @@ namespace brain
                 periodics::CAlerts& f_alerts,
                 periodics::CImu& f_imu,
                 periodics::CUltrasonido& f_ultra,
+                periodics::CPos_calculation& f_pos,
                 periodics::CInstantConsumption& f_instant,
                 periodics::CTotalVoltage& f_baterry,
                 brain::CRobotStateMachine& f_robotStateMachine,
@@ -75,6 +77,7 @@ namespace brain
             periodics::CAlerts& m_alerts;
             periodics::CImu& m_imu;
             periodics::CUltrasonido& m_ultra;
+            periodics::CPos_calculation& m_pos;
             periodics::CInstantConsumption& m_instant;
             periodics::CTotalVoltage& m_baterry;
             brain::CRobotStateMachine& m_robotStateMachine;

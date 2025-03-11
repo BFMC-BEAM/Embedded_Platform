@@ -448,7 +448,9 @@ BUILD/NUCLEO_F401RE/ARMC6/source/brain/klmanager.o: \
   include/Eigen/src/Eigenvalues/./RealQZ.h \
   include/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
   include/periodics/ultrasonido.hpp include/drivers/speedingmotor.hpp \
-  include/periodics/instantconsumption.hpp \
-  include/periodics/totalvoltage.hpp include/brain/robotstatemachine.hpp \
+  include/periodics/pos_calculation.hpp \
+  include/periodics/rpm_counter.hpp include/brain/robotstatemachine.hpp \
   include/drivers/steeringmotor.hpp include/utils/taskmanager.hpp \
+  include/periodics/instantconsumption.hpp \
+  include/periodics/totalvoltage.hpp \
   include/periodics/resourcemonitor.hpp

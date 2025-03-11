@@ -43,6 +43,7 @@ namespace brain
         periodics::CAlerts& f_alerts,
         periodics::CImu& f_imu,
         periodics::CUltrasonido& f_ultra,
+        periodics::CPos_calculation& f_pos,
         periodics::CInstantConsumption& f_instant,
         periodics::CTotalVoltage& f_baterry,
         brain::CRobotStateMachine& f_robotStateMachine,
@@ -52,6 +53,7 @@ namespace brain
     , m_alerts(f_alerts)
     , m_imu(f_imu)
     , m_ultra(f_ultra)
+    , m_pos(f_pos)
     , m_instant(f_instant)
     , m_baterry(f_baterry)
     , m_robotStateMachine(f_robotStateMachine)
@@ -87,6 +89,8 @@ namespace brain
                     ThisThread::sleep_for(chrono::milliseconds(50));
                     m_ultra.serialCallbackULTRAcommand("0", response);
                     ThisThread::sleep_for(chrono::milliseconds(50));
+                    m_pos.serialCallbackPOScommand("0", response);
+                    ThisThread::sleep_for(chrono::milliseconds(50));
                     m_instant.serialCallbackINSTANTcommand("0", response);
                     ThisThread::sleep_for(chrono::milliseconds(50));
                     m_baterry.serialCallbackTOTALVcommand("0", response);
@@ -105,6 +109,7 @@ namespace brain
                     uint8_globalsV_value_of_kl = 15;
                     if(!bool_globalsV_imu_isActive) m_imu.serialCallbackIMUcommand("1", response);
                     if(!bool_globalsV_ultra_isActive) m_ultra.serialCallbackULTRAcommand("1", response);
+                    if(!bool_globalsV_pos_isActive) m_pos.serialCallbackPOScommand("1", response);
                     if(!bool_globalsV_instant_isActive) m_instant.serialCallbackINSTANTcommand("1", response);
                     if(!bool_globalsV_battery_isActive) m_baterry.serialCallbackTOTALVcommand("1", response);
                     if(!bool_globalsV_resource_isActive) m_resourceM.serialCallbackRESMONCommand("1", response);

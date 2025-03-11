@@ -79,7 +79,7 @@ periodics::CRpm_counter g_rpm_counter(g_baseTick * 10, rpmCounterPin);
 periodics::CPos_calculation g_pos_calculation(g_baseTick * 10, g_rpi, g_imu, g_rpm_counter);
 
 /* USER NEW COMPONENT END */
-brain::CKlmanager g_klmanager(g_alerts, g_imu, g_ultrasonido, g_instantconsumption, g_totalvoltage, g_robotstatemachine, g_resourceMonitor);
+brain::CKlmanager g_klmanager(g_alerts, g_imu, g_ultrasonido, g_pos_calculation, g_instantconsumption, g_totalvoltage, g_robotstatemachine, g_resourceMonitor);
 
 periodics::CPowermanager g_powermanager(g_baseTick * 100, g_klmanager, g_rpi, g_totalvoltage, g_instantconsumption, g_alerts);
 

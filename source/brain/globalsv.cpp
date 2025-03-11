@@ -47,6 +47,7 @@ uint8_t alpha_scaled = 25; // EMA coefficient scaled from 0.025
 uint8_t windowSize = 10;   // Window size for the averaging filter
 uint8_t indexul = 0;       // buffer index
 
+bool bool_globalsV_pos_isActive = false;
 bool bool_globalsV_ultra_isActive = false;
 bool bool_globalsV_imu_isActive = false;
 bool bool_globalsV_instant_isActive = false;

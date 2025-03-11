@@ -55,6 +55,7 @@ extern uint8_t alpha_scaled;
 extern uint8_t windowSize; 
 extern uint8_t indexul; 
 
+extern bool bool_globalsV_pos_isActive;
 extern bool bool_globalsV_imu_isActive;
 extern bool bool_globalsV_ultra_isActive;
 extern bool bool_globalsV_instant_isActive;

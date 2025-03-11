@@ -5,7 +5,9 @@
 #define _100_chars                      100
 #define DELTA                           0.1
 #define CONVERT_CM_TO_M                 0.01
-#define TIME_TO_SEND_MSG_MS             500
+#define TIME_TO_SEND_MSG_MS             200
+#define M_PI                            3.14159265358979323846
+
 // TODO: Add your code here
 namespace periodics
 {
@@ -55,11 +57,14 @@ namespace periodics
     void CPos_calculation::_run()
     {
         /* Run method behaviour */
-        // if(!m_isActive) return;
+        if(!m_isActive) return;
 
         char buffer[_100_chars];      
         float yaw = m_imu.getYaw();
-        int velocity = m_rpm_counter.getVelocity();
+        int velocity = m_rpm_counter.getVelocity()*1.11; // 1.11 es un factor de corrección
+
+        //Paso yaw a radianes
+        yaw *= M_PI / 180;
 
         // Cálculo de la posición
 
@@ -68,7 +73,7 @@ namespace periodics
 
         if (isTimeToSendMsg())
         {
-            snprintf(buffer, sizeof(buffer), "@pos:%3.2f;%2.2f;%2.2f;%3d;;\r\n", yaw,_x,_y,velocity);
+            snprintf(buffer, sizeof(buffer), "@pos:%f;%2.2f;%2.2f;%3d;;\r\n", yaw,_x,_y,velocity);
             m_serial.write(buffer,strlen(buffer));
         }
     }

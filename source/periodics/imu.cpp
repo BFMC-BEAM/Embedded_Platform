@@ -268,8 +268,8 @@ namespace periodics{
         Eigen::Vector2d acceleration(accelx, accely);
         Eigen::Vector2d position(x_(mat_x_position_x), x_(mat_x_position_y));
 
-        predict(acceleration);
-        update(position);
+        // predict(acceleration);
+        // update(position);
         updateImuData(
             (float)(s16_euler_h_raw/BNO055_EULER_DIV_DEG_int), 
             (float)(s16_euler_p_raw/BNO055_EULER_DIV_DEG_int), 
@@ -284,7 +284,7 @@ namespace periodics{
             x_(mat_x_position_y), 
             0.0);
 
-        print_imu_data();
+        // print_imu_data();
         
     }
 

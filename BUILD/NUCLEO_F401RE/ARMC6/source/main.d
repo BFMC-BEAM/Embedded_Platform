@@ -450,10 +450,10 @@ BUILD/NUCLEO_F401RE/ARMC6/source/main.o: source/main.cpp \
   include/periodics/instantconsumption.hpp \
   include/periodics/totalvoltage.hpp include/brain/klmanager.hpp \
   include/periodics/ultrasonido.hpp include/drivers/speedingmotor.hpp \
-  include/brain/robotstatemachine.hpp include/drivers/steeringmotor.hpp \
-  include/utils/taskmanager.hpp include/periodics/resourcemonitor.hpp \
+  include/periodics/pos_calculation.hpp \
+  include/periodics/rpm_counter.hpp include/brain/robotstatemachine.hpp \
+  include/drivers/steeringmotor.hpp include/utils/taskmanager.hpp \
+  include/periodics/resourcemonitor.hpp \
   include/periodics/powermanager.hpp include/brain/batterymanager.hpp \
   include/drivers/serialmonitor.hpp include/utils/queue.hpp \
-  include/utils/queue.tpp include/drivers/rpmcounter.hpp \
-  include/periodics/rpm_counter.hpp \
-  include/periodics/pos_calculation.hpp
+  include/utils/queue.tpp include/drivers/rpmcounter.hpp

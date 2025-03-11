@@ -115,7 +115,7 @@ namespace periodics
         if(currentDeltaTimeMs >= MAX_DELTA_TIME_MS)
             _rpm = DEFAULT_RPM;
         else 
-            _rpm = (60000.0 / currentDeltaTimeMs);
+            _rpm = (60000.0 / currentDeltaTimeMs); // (60*1000) / (dt*1000)
     }
 
     //convierte la velocidad de RPM a cm/Seg
