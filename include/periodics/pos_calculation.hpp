@@ -37,6 +37,7 @@ namespace periodics
             CRpm_counter& m_rpm_counter; 
             /* private variables & method member */
 
+            mbed::Timer _timer;
             double _x = 0;
             double _y = 0;
             double _z = 0;
@@ -48,6 +49,7 @@ namespace periodics
             
             /* Run method */
             virtual void        _run();
+            bool isTimeToSendMsg(void);
 
             /** @brief Active flag  */
             bool m_isActive;

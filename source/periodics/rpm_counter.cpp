@@ -84,16 +84,14 @@ namespace periodics
         // if(!m_isActive) return;
         
         TimeToResetMs=validDeltaTimeMs(_timer.elapsed_time().count()/1000);
-        printf("timer base %d | timer reset %d", (int)_timer.elapsed_time().count()/1000000, (int)TimeToResetMs);
         if(TimeToResetMs > MAX_DELAY_TO_RESET_MS)
         {   
-            //printf("filtro de rebote esta manqueando");
             _rpm = DEFAULT_RPM;
             velCMS = DEFAULT_CMS_VEL;
             TimeToResetMs = MAX_DELAY_TO_RESET_MS;
         }
 
-        printf("RPM: %d | CM/S: %d | Count: %d | deltaTimeMs: %d | Time to Reset RPM: %d \n", _rpm, velCMS , _count, deltaTimeMs, TimeToResetMs);
+        //printf("RPM: %d | CM/S: %d | Count: %d | deltaTimeMs: %d | Time to Reset RPM: %d \n", _rpm, velCMS , _count, deltaTimeMs, TimeToResetMs);
 
         previousCount=_count;
 
@@ -123,7 +121,7 @@ namespace periodics
     //convierte la velocidad de RPM a cm/Seg
     void CRpm_counter::calculateVelocityCMS(int RpmVelocity)
     {
-        velCMS = (int)((float)RpmVelocity * 1.0472);
+        velCMS = (int)((float)RpmVelocity * 1.0472/10);
     }
     
     

@@ -3,7 +3,9 @@
 #include "periodics/rpm_counter.hpp"
 
 #define _100_chars                      100
-
+#define DELTA                           0.1
+#define CONVERT_CM_TO_M                 0.01
+#define TIME_TO_SEND_MSG_MS             500
 // TODO: Add your code here
 namespace periodics
 {
@@ -23,7 +25,7 @@ namespace periodics
     , m_rpm_counter(f_rpm_counter)
     {
         /* constructor behaviour */
-        
+        _timer.start();
     }
 
     /** @brief  CPos_calculation class destructor
@@ -61,21 +63,28 @@ namespace periodics
 
         // Cálculo de la posición
 
-        _x += velocity * cos(yaw);
-        _y += velocity * sin(yaw);
+        _x += velocity * cos(yaw)*DELTA*CONVERT_CM_TO_M;    //acá hay un error xq hace mal la integral, no deberia ser una cte DELTA
+        _y += velocity * sin(yaw)*DELTA*CONVERT_CM_TO_M;
 
-        if (m_messageSendCounter >= 150)
+        if (isTimeToSendMsg())
         {
-
-            m_messageSendCounter = 0;
-            snprintf(buffer, sizeof(buffer), "@pos:%.3f;%.3f;;\r\n",_x,_y);
-            m_serial.write(buffer,strlen(buffer));    
+            snprintf(buffer, sizeof(buffer), "@pos:%3.2f;%2.2f;%2.2f;%3d;;\r\n", yaw,_x,_y,velocity);
+            m_serial.write(buffer,strlen(buffer));
         }
-        else
+    }
+
+    //cuenta un determinado tiempo y retorna true cuando llega a ese valor. luego reinicia el ciclo de cuentas
+    bool CPos_calculation::isTimeToSendMsg(void)
+    {   
+        int currentTimeMs = _timer.elapsed_time().count()/1000;
+        //printf("Tiempo transcurrido en mS:%5d ;;\r\n", currentTimeMs);    //descomentar para ver como se incrementa el timer
+        if(currentTimeMs < TIME_TO_SEND_MSG_MS)
         {
-            m_messageSendCounter++;
+            return false;
         }
-
+        _timer.reset();
+        _timer.start();
+        return true;
     }
     
 }; // namespace periodics
