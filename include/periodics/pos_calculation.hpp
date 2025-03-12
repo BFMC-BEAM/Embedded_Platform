@@ -7,7 +7,6 @@
 #include <utils/task.hpp>
 #include <periodics/imu.hpp>
 #include <periodics/rpm_counter.hpp>
-#include <brain/robotstatemachine.hpp>
 #include <mbed.h>
 
 namespace periodics

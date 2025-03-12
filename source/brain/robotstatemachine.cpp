@@ -161,7 +161,7 @@ namespace brain{
         }
     }
 
-    int CRobotStateMachine::getSpeed()
+    int CRobotStateMachine::getSpeed(void)
     {
         return m_speed;
     }

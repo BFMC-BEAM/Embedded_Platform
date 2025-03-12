@@ -73,7 +73,7 @@ namespace brain
             /* Serial callback method for vcd */
             void serialCallbackVCDcommand(char const * message, char * response);
             
-            int getSpeed();
+            int getSpeed(void);
 
         private:
             /* Contains the state machine, which control the lower level drivers (motor and steering) based the current state. */

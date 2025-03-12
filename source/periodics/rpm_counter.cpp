@@ -19,7 +19,8 @@ namespace periodics
      */
      CRpm_counter::CRpm_counter(
           std::chrono::milliseconds f_period,
-          mbed::InterruptIn& rpmCounterPin
+          mbed::InterruptIn& rpmCounterPin,
+          brain::CRobotStateMachine& f_speed
           )
           : utils::CTask(f_period)
           , rpmCounterPin(rpmCounterPin)
@@ -30,6 +31,7 @@ namespace periodics
           , previousCount(0)
           , TimeToResetMs(0)
           , velCMS(0)
+          , m_speed(f_speed)
      {
           _timer.start(); // Inicializa el temporizador
           rpmCounterPin.fall(callback(this, &CRpm_counter::increment));
@@ -122,6 +124,7 @@ namespace periodics
     void CRpm_counter::calculateVelocityCMS(int RpmVelocity)
     {
         velCMS = (int)((float)RpmVelocity * 1.0472/10);
+        velCMS *= m_speed.getSpeed()/abs(m_speed.getSpeed()); // obtengo el signo de la velocidad
     }
     
     

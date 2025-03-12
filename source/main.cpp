@@ -51,7 +51,7 @@ periodics::CInstantConsumption g_instantconsumption(g_baseTick * 1000, A2, g_rpi
 periodics::CTotalVoltage g_totalvoltage(g_baseTick*3000, A4, g_rpi);
 
 // It's a task for sending periodically the IMU values
-periodics::CImu g_imu(g_baseTick*10, g_rpi, I2C_SDA, I2C_SCL);
+periodics::CImu g_imu(g_baseTick*150, g_rpi, I2C_SDA, I2C_SCL);
 
 //PIN for a motor speed in ms, inferior and superior limit
 drivers::CSpeedingMotor g_speedingDriver(D3, -600, 600); //speed in cm/s
@@ -71,12 +71,12 @@ mbed::InterruptIn echoPinFront(D9);
 mbed::InterruptIn echoPinBack(D7);
 mbed::InterruptIn echoPinLeft(D6);
 mbed::InterruptIn echoPinRight(D5);
-periodics::CUltrasonido g_ultrasonido(g_baseTick*150, g_rpi, g_speedingDriver, trigPin, echoPinFront, echoPinBack, echoPinLeft, echoPinRight);
+periodics::CUltrasonido g_ultrasonido(g_baseTick * 150, g_rpi, g_speedingDriver, trigPin, echoPinFront, echoPinBack, echoPinLeft, echoPinRight);
 
 mbed::InterruptIn rpmCounterPin(D10);
-periodics::CRpm_counter g_rpm_counter(g_baseTick * 10, rpmCounterPin);
+periodics::CRpm_counter g_rpm_counter(g_baseTick * 150, rpmCounterPin, g_robotstatemachine);
 
-periodics::CPos_calculation g_pos_calculation(g_baseTick * 10, g_rpi, g_imu, g_rpm_counter);
+periodics::CPos_calculation g_pos_calculation(g_baseTick * 150, g_rpi, g_imu, g_rpm_counter);
 
 /* USER NEW COMPONENT END */
 brain::CKlmanager g_klmanager(g_alerts, g_imu, g_ultrasonido, g_pos_calculation, g_instantconsumption, g_totalvoltage, g_robotstatemachine, g_resourceMonitor);

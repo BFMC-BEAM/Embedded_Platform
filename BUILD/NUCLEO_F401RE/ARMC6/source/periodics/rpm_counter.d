@@ -290,4 +290,7 @@ BUILD/NUCLEO_F401RE/ARMC6/source/periodics/rpm_counter.o: \
   mbed-os/platform/include/platform/ScopedRamExecutionLock.h \
   mbed-os/platform/include/platform/mbed_stats.h \
   mbed-os/platform/include/platform/Stream.h \
-  mbed-os/platform/include/platform/FileLike.h
+  mbed-os/platform/include/platform/FileLike.h \
+  include/brain/robotstatemachine.hpp include/drivers/speedingmotor.hpp \
+  include/drivers/steeringmotor.hpp include/utils/taskmanager.hpp \
+  include/brain/globalsv.hpp

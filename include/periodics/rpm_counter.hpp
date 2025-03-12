@@ -6,6 +6,7 @@
 #include <chrono>
 #include <utils/task.hpp>
 #include <mbed.h>
+#include <brain/robotstatemachine.hpp>
 
 namespace periodics
 {
@@ -19,7 +20,8 @@ namespace periodics
             /* Constructor */
             CRpm_counter(
                 std::chrono::milliseconds f_period,
-                mbed::InterruptIn& rpmCounterPin
+                mbed::InterruptIn& rpmCounterPin,
+                brain::CRobotStateMachine& f_speed
             );
             /* Destructor */
             ~CRpm_counter();
@@ -50,6 +52,8 @@ namespace periodics
             /* Run method */
             virtual void        _run();
 
+            brain::CRobotStateMachine& m_speed;
+            
             /** @brief Active flag  */
             bool m_isActive;
 
