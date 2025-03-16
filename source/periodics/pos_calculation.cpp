@@ -3,9 +3,9 @@
 #include "periodics/rpm_counter.hpp"
 
 #define _100_chars                      100
-#define DELTA                           0.1
+#define DELTA                           0.15
 #define CONVERT_CM_TO_M                 0.01
-#define TIME_TO_SEND_MSG_MS             200
+#define TIME_TO_SEND_MSG_MS             150
 #define M_PI                            3.14159265358979323846
 
 // TODO: Add your code here
@@ -65,15 +65,16 @@ namespace periodics
 
         //Paso yaw a radianes
         yaw *= M_PI / 180;
+        yaw = (yaw - M_PI < -M_PI) ? yaw + M_PI : yaw - M_PI;  //Envio yaw igual que el simulador
 
         // Cálculo de la posición
 
-        _x += velocity * cos(yaw)*DELTA*CONVERT_CM_TO_M;    //acá hay un error xq hace mal la integral, no deberia ser una cte DELTA
+        _x += velocity * cos(yaw)*DELTA*CONVERT_CM_TO_M;
         _y += velocity * sin(yaw)*DELTA*CONVERT_CM_TO_M;
 
         if (isTimeToSendMsg())
         {
-            snprintf(buffer, sizeof(buffer), "@pos:%f;%2.2f;%2.2f;%3d;;\r\n", yaw,_x,_y,velocity);
+            snprintf(buffer, sizeof(buffer), "@pos:%.2f;%.2f;%.2f;%d;;\r\n", -yaw,_x,-_y,velocity);
             m_serial.write(buffer,strlen(buffer));
         }
     }

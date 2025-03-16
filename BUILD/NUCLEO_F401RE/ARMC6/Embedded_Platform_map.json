@@ -159,7 +159,7 @@
             ".text": 2049,
             ".data": 2,
             ".bss": 63,
-            ".text-delta": 4,
+            ".text-delta": 0,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -181,18 +181,18 @@
             ".text": 4946,
             ".data": 48,
             ".bss": 3738,
-            ".text-delta": 10,
+            ".text-delta": 0,
             ".data-delta": 0,
-            ".bss-delta": 8
+            ".bss-delta": 0
         }
     },
     {
         "module": "source/periodics",
         "size": {
-            ".text": 16142,
+            ".text": 16262,
             ".data": 0,
             ".bss": 19,
-            ".text-delta": 36,
+            ".text-delta": 16,
             ".data-delta": 0,
             ".bss-delta": 0
         }
@@ -211,9 +211,9 @@
     {
         "summary": {
             "static_ram": 16743,
-            "static_ram_delta": 8,
-            "total_flash": 171734,
-            "total_flash_delta": 50
+            "static_ram_delta": 0,
+            "total_flash": 171854,
+            "total_flash_delta": 16
         }
     }
 ]
